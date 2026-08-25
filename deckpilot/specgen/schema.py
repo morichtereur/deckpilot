@@ -1,0 +1,85 @@
+"""Slide specifications: what goes on a slide, never where it goes.
+
+A spec is the contract between content selection (deterministic builder or LLM)
+and layout. Content decisions - which RAID items make the cut, how the action
+title is phrased - live here. Position, size and colour do not: those are the
+renderer's, derived from the theme. That split is what keeps an LLM from being
+able to break the layout.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Annotated, Literal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class Spec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class SlideBase(Spec):
+    title: str = Field(min_length=1, max_length=160)
+    subtitle: str | None = Field(default=None, max_length=200)
+    considerations: list[str] = Field(default_factory=list, max_length=6)
+
+
+# --------------------------------------------------------------------------
+# 1. Section divider
+# --------------------------------------------------------------------------
+
+
+class SectionDividerSpec(Spec):
+    layout: Literal["section_divider"] = "section_divider"
+    number: str = Field(min_length=1, max_length=2)
+    title: str = Field(min_length=1, max_length=60)
+    kicker: str | None = Field(default=None, max_length=120)
+
+
+# --------------------------------------------------------------------------
+# 2. Workstream charter
+# --------------------------------------------------------------------------
+
+
+class CharterColumn(Spec):
+    number: str = Field(min_length=1, max_length=3)
+    name: str = Field(min_length=1, max_length=60)
+    activities: list[str] = Field(min_length=1, max_length=6)
+    outcomes: list[str] = Field(min_length=1, max_length=5)
+
+
+class WorkstreamCharterSpec(SlideBase):
+    layout: Literal["workstream_charter"] = "workstream_charter"
+    columns: list[CharterColumn] = Field(min_length=3, max_length=5)
+    activities_label: str = "Key activities"
+    outcomes_label: str = "Outcomes"
+
+
+# --------------------------------------------------------------------------
+# Deck
+# --------------------------------------------------------------------------
+
+AnySlideSpec = Annotated[
+    SectionDividerSpec | WorkstreamCharterSpec,
+    Field(discriminator="layout"),
+]
+
+
+class DeckSpec(Spec):
+    title: str
+    subtitle: str
+    week: str
+    slides: list[AnySlideSpec] = Field(min_length=1)
+
+    @classmethod
+    def load(cls, path: str | Path) -> DeckSpec:
+        return cls.model_validate_json(Path(path).read_text(encoding="utf-8"))
+
+    def save(self, path: str | Path) -> Path:
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        payload = json.loads(self.model_dump_json(exclude_none=True))
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        return path
