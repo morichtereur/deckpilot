@@ -1,0 +1,1919 @@
+{
+  "name": "Project Meridian",
+  "client": "Northwind GBS",
+  "subtitle": "Global business services transformation",
+  "start": "2026-02-02",
+  "end": "2027-01-29",
+  "work_packages": [
+    {
+      "id": "wp1",
+      "number": 1,
+      "name": "Operating Model & Service Design",
+      "objective": "Define the target service portfolio, the organisation that delivers it and the footprint it runs from, so that process and technology design have a fixed frame.",
+      "lead": "Ines Vogelsang",
+      "sub_streams": [
+        {
+          "id": "ss11",
+          "name": "Service Catalogue & SLAs",
+          "lead": "Ines Vogelsang",
+          "objective": "A costed catalogue of 46 services with agreed SLAs and a KPI baseline.",
+          "phases": [
+            {
+              "name": "Service definition",
+              "start": "2026-02-09",
+              "end": "2026-04-24",
+              "status": "complete"
+            },
+            {
+              "name": "SLA negotiation",
+              "start": "2026-04-27",
+              "end": "2026-07-31",
+              "status": "complete"
+            },
+            {
+              "name": "Catalogue publication",
+              "start": "2026-08-03",
+              "end": "2026-10-16",
+              "status": "in-progress"
+            },
+            {
+              "name": "Embed in service reviews",
+              "start": "2026-10-19",
+              "end": "2027-01-22",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss12",
+          "name": "Organisation & Role Design",
+          "lead": "Tobias Lindqvist",
+          "objective": "Target structure, role profiles and span-of-control model for 640 GBS roles.",
+          "phases": [
+            {
+              "name": "Role architecture",
+              "start": "2026-02-09",
+              "end": "2026-05-08",
+              "status": "complete"
+            },
+            {
+              "name": "Structure & spans",
+              "start": "2026-05-11",
+              "end": "2026-08-14",
+              "status": "complete"
+            },
+            {
+              "name": "Consultation & selection",
+              "start": "2026-08-17",
+              "end": "2026-11-20",
+              "status": "at-risk"
+            },
+            {
+              "name": "Appointment & onboarding",
+              "start": "2026-11-23",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss13",
+          "name": "Location & Footprint Strategy",
+          "lead": "Priya Raghunathan",
+          "objective": "Confirm the two-hub-plus-nearshore footprint and secure the site build-out.",
+          "phases": [
+            {
+              "name": "Location assessment",
+              "start": "2026-02-16",
+              "end": "2026-05-22",
+              "status": "complete"
+            },
+            {
+              "name": "Site selection & business case",
+              "start": "2026-05-25",
+              "end": "2026-08-07",
+              "status": "complete"
+            },
+            {
+              "name": "Site build-out",
+              "start": "2026-08-10",
+              "end": "2026-12-18",
+              "status": "in-progress"
+            }
+          ]
+        }
+      ],
+      "core_team": [
+        {
+          "name": "GBS Design Office",
+          "note": "8 FTE, dedicated"
+        },
+        {
+          "name": "Finance Operating Model",
+          "note": "4 FTE, dedicated"
+        },
+        {
+          "name": "HR Organisation Design",
+          "note": "2 FTE, 50% allocation"
+        }
+      ],
+      "contributing_teams": [
+        {
+          "name": "Group Finance Policy",
+          "note": null
+        },
+        {
+          "name": "Regional Controllers (5)",
+          "note": "consulted per region"
+        },
+        {
+          "name": "Workplace & Real Estate",
+          "note": null
+        },
+        {
+          "name": "Legal & Employee Relations",
+          "note": null
+        }
+      ]
+    },
+    {
+      "id": "wp2",
+      "number": 2,
+      "name": "Process Standardisation",
+      "objective": "Move four end-to-end finance processes onto a single global standard with a documented control framework, so the hubs inherit one way of working, not five.",
+      "lead": "Marcus Adeyemi",
+      "sub_streams": [
+        {
+          "id": "ss21",
+          "name": "Record to Report",
+          "lead": "Marcus Adeyemi",
+          "objective": "One global close calendar, standard journal taxonomy and a rebuilt control set.",
+          "phases": [
+            {
+              "name": "Process design",
+              "start": "2026-02-16",
+              "end": "2026-05-29",
+              "status": "complete"
+            },
+            {
+              "name": "Control framework build",
+              "start": "2026-06-01",
+              "end": "2026-09-11",
+              "status": "in-progress"
+            },
+            {
+              "name": "Test & pilot close",
+              "start": "2026-09-14",
+              "end": "2026-11-27",
+              "status": "planned"
+            },
+            {
+              "name": "Global rollout",
+              "start": "2026-11-30",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss22",
+          "name": "Purchase to Pay",
+          "lead": "Chiara Bellandi",
+          "objective": "Single P2P flow with touchless invoice processing and one supplier master.",
+          "phases": [
+            {
+              "name": "Process design",
+              "start": "2026-02-16",
+              "end": "2026-05-29",
+              "status": "complete"
+            },
+            {
+              "name": "Build & configuration",
+              "start": "2026-06-01",
+              "end": "2026-09-25",
+              "status": "at-risk"
+            },
+            {
+              "name": "Test & UAT",
+              "start": "2026-09-28",
+              "end": "2026-12-11",
+              "status": "planned"
+            },
+            {
+              "name": "Global rollout",
+              "start": "2026-12-14",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss23",
+          "name": "Order to Cash",
+          "lead": "Daniel Okonkwo",
+          "objective": "Standard billing, collections and cash application with one dunning policy.",
+          "phases": [
+            {
+              "name": "Process design",
+              "start": "2026-03-02",
+              "end": "2026-06-12",
+              "status": "complete"
+            },
+            {
+              "name": "Build & configuration",
+              "start": "2026-06-15",
+              "end": "2026-09-25",
+              "status": "in-progress"
+            },
+            {
+              "name": "Test & UAT",
+              "start": "2026-09-28",
+              "end": "2026-12-11",
+              "status": "planned"
+            },
+            {
+              "name": "Global rollout",
+              "start": "2026-12-14",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss24",
+          "name": "Master Data & Controls",
+          "lead": "Anneke de Vries",
+          "objective": "One governed master data model for vendor, customer and chart of accounts.",
+          "phases": [
+            {
+              "name": "Data model design",
+              "start": "2026-03-02",
+              "end": "2026-06-26",
+              "status": "complete"
+            },
+            {
+              "name": "Cleansing & governance build",
+              "start": "2026-06-29",
+              "end": "2026-10-09",
+              "status": "at-risk"
+            },
+            {
+              "name": "Migration validation",
+              "start": "2026-10-12",
+              "end": "2027-01-08",
+              "status": "planned"
+            }
+          ]
+        }
+      ],
+      "core_team": [
+        {
+          "name": "Global Process Owners (4)",
+          "note": "1 per E2E process"
+        },
+        {
+          "name": "Process Design Team",
+          "note": "11 FTE, dedicated"
+        },
+        {
+          "name": "Internal Controls",
+          "note": "3 FTE, dedicated"
+        }
+      ],
+      "contributing_teams": [
+        {
+          "name": "Regional Finance Teams",
+          "note": "design workshops + UAT"
+        },
+        {
+          "name": "Group Tax",
+          "note": "P2P and O2C tax logic"
+        },
+        {
+          "name": "Treasury",
+          "note": "O2C cash application"
+        },
+        {
+          "name": "External Audit",
+          "note": "control framework review"
+        }
+      ]
+    },
+    {
+      "id": "wp3",
+      "number": 3,
+      "name": "Technology & Automation",
+      "objective": "Deliver the platform the standard processes run on: one ERP template, a workflow and automation layer, and reporting that the service reviews can be run from.",
+      "lead": "Rahul Menon",
+      "sub_streams": [
+        {
+          "id": "ss31",
+          "name": "ERP Template Alignment",
+          "lead": "Rahul Menon",
+          "objective": "Collapse four regional ERP variants onto one global template.",
+          "phases": [
+            {
+              "name": "Template gap analysis",
+              "start": "2026-02-09",
+              "end": "2026-05-15",
+              "status": "complete"
+            },
+            {
+              "name": "Template build",
+              "start": "2026-05-18",
+              "end": "2026-09-11",
+              "status": "in-progress"
+            },
+            {
+              "name": "Integration test",
+              "start": "2026-09-14",
+              "end": "2026-12-04",
+              "status": "planned"
+            },
+            {
+              "name": "Cutover & hypercare",
+              "start": "2026-12-07",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss32",
+          "name": "Workflow & Intelligent Automation",
+          "lead": "Sofia Marchetti",
+          "objective": "Automate 38 candidate steps across P2P, O2C and R2R with a governed pipeline.",
+          "phases": [
+            {
+              "name": "Opportunity assessment",
+              "start": "2026-03-16",
+              "end": "2026-06-19",
+              "status": "complete"
+            },
+            {
+              "name": "Automation build wave 1",
+              "start": "2026-06-22",
+              "end": "2026-10-02",
+              "status": "in-progress"
+            },
+            {
+              "name": "Automation build wave 2",
+              "start": "2026-10-05",
+              "end": "2027-01-15",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss33",
+          "name": "Reporting & Analytics",
+          "lead": "Jonas Brenner",
+          "objective": "One performance layer: SLA, KPI and cost-to-serve reporting for the service reviews.",
+          "phases": [
+            {
+              "name": "Reporting design",
+              "start": "2026-04-06",
+              "end": "2026-07-17",
+              "status": "complete"
+            },
+            {
+              "name": "Data layer build",
+              "start": "2026-07-20",
+              "end": "2026-11-06",
+              "status": "in-progress"
+            },
+            {
+              "name": "Dashboard build & UAT",
+              "start": "2026-11-09",
+              "end": "2027-01-22",
+              "status": "planned"
+            }
+          ]
+        }
+      ],
+      "core_team": [
+        {
+          "name": "ERP Template Team",
+          "note": "9 FTE, dedicated"
+        },
+        {
+          "name": "Automation CoE",
+          "note": "5 FTE, dedicated"
+        },
+        {
+          "name": "Data & Analytics",
+          "note": "4 FTE, dedicated"
+        }
+      ],
+      "contributing_teams": [
+        {
+          "name": "Group IT Architecture",
+          "note": "design authority"
+        },
+        {
+          "name": "Information Security",
+          "note": "gated reviews"
+        },
+        {
+          "name": "Platform Vendor",
+          "note": "statement of work"
+        },
+        {
+          "name": "Regional IT (5)",
+          "note": "cutover support"
+        }
+      ]
+    },
+    {
+      "id": "wp4",
+      "number": 4,
+      "name": "Transition & Change",
+      "objective": "Move the work to the hubs without losing it: structured knowledge transfer in three waves, with the change and training effort sized to the same waves.",
+      "lead": "Yusuf Demirci",
+      "sub_streams": [
+        {
+          "id": "ss41",
+          "name": "Knowledge Transfer & Migration",
+          "lead": "Yusuf Demirci",
+          "objective": "Three migration waves covering 640 roles, each gated on a stability review.",
+          "phases": [
+            {
+              "name": "Wave planning",
+              "start": "2026-04-06",
+              "end": "2026-07-24",
+              "status": "complete"
+            },
+            {
+              "name": "Wave 1 knowledge transfer",
+              "start": "2026-07-27",
+              "end": "2026-10-30",
+              "status": "in-progress"
+            },
+            {
+              "name": "Wave 2 knowledge transfer",
+              "start": "2026-10-05",
+              "end": "2026-12-18",
+              "status": "planned"
+            },
+            {
+              "name": "Wave 3 knowledge transfer",
+              "start": "2026-11-30",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        },
+        {
+          "id": "ss42",
+          "name": "Change, Comms & Training",
+          "lead": "Laura Nkemelu",
+          "objective": "Readiness for 640 movers and 1,200 retained users, measured not assumed.",
+          "phases": [
+            {
+              "name": "Change impact assessment",
+              "start": "2026-03-16",
+              "end": "2026-06-26",
+              "status": "complete"
+            },
+            {
+              "name": "Curriculum build",
+              "start": "2026-06-29",
+              "end": "2026-10-23",
+              "status": "in-progress"
+            },
+            {
+              "name": "Delivery & readiness",
+              "start": "2026-10-26",
+              "end": "2027-01-29",
+              "status": "planned"
+            }
+          ]
+        }
+      ],
+      "core_team": [
+        {
+          "name": "Transition Management Office",
+          "note": "6 FTE, dedicated"
+        },
+        {
+          "name": "Change & Communications",
+          "note": "4 FTE, dedicated"
+        },
+        {
+          "name": "Training Design",
+          "note": "3 FTE, dedicated"
+        }
+      ],
+      "contributing_teams": [
+        {
+          "name": "Retained Finance Leads (5)",
+          "note": "wave sign-off"
+        },
+        {
+          "name": "Hub Operations Leadership",
+          "note": null
+        },
+        {
+          "name": "Legal & Employee Relations",
+          "note": null
+        },
+        {
+          "name": "Internal Communications",
+          "note": null
+        }
+      ]
+    }
+  ],
+  "stage_gates": [
+    {
+      "id": "g1",
+      "number": 1,
+      "name": "Mobilisation complete",
+      "date": "2026-03-13",
+      "status": "passed",
+      "criteria": [
+        "Programme team mobilised and funded",
+        "Baseline scope and benefit case approved",
+        "Governance and cadence in place"
+      ]
+    },
+    {
+      "id": "g2",
+      "number": 2,
+      "name": "Design sign-off",
+      "date": "2026-05-29",
+      "status": "passed",
+      "criteria": [
+        "End-to-end process designs approved by all Global Process Owners",
+        "Target operating model and role architecture agreed",
+        "Design decision log closed or dispositioned"
+      ]
+    },
+    {
+      "id": "g3",
+      "number": 3,
+      "name": "Build complete",
+      "date": "2026-09-11",
+      "status": "at-risk",
+      "criteria": [
+        "ERP template build complete and unit tested",
+        "Control framework built and walked through with External Audit",
+        "P2P country tax variants configured",
+        "Wave 1 automations in pre-production"
+      ]
+    },
+    {
+      "id": "g4",
+      "number": 4,
+      "name": "Go-live readiness",
+      "date": "2026-11-20",
+      "status": "upcoming",
+      "criteria": [
+        "Integration and user acceptance testing signed off",
+        "Wave 1 knowledge transfer complete and stability review passed",
+        "Selection complete and hub roles appointed",
+        "Cutover and fallback plans rehearsed"
+      ]
+    },
+    {
+      "id": "g5",
+      "number": 5,
+      "name": "Hypercare exit",
+      "date": "2027-01-22",
+      "status": "upcoming",
+      "criteria": [
+        "All three waves live and stable for four consecutive weeks",
+        "SLAs met for two consecutive service review cycles",
+        "Benefit run-rate tracking within 10% of the case"
+      ]
+    }
+  ],
+  "raid": [
+    {
+      "id": "R-01",
+      "type": "risk",
+      "title": "P2P country tax variants exceed design assumption",
+      "description": "Italy, Spain and Poland e-invoicing variants each need bespoke configuration that the design assumed would be template-standard, putting the Gate 3 build date at risk.",
+      "severity": "H",
+      "owner": "Chiara Bellandi",
+      "raised": "2026-07-13",
+      "due": "2026-09-11",
+      "mitigation": "Two Group Tax analysts released to P2P through October; conditional Gate 3 pass proposed for P2P only.",
+      "sub_stream_id": "ss22"
+    },
+    {
+      "id": "R-02",
+      "type": "risk",
+      "title": "Works council consultation extends the selection window",
+      "description": "German and Dutch consultation opened two weeks late. Any further slip compresses selection and appointment into the Gate 4 window with no float.",
+      "severity": "H",
+      "owner": "Tobias Lindqvist",
+      "raised": "2026-08-10",
+      "due": "2026-11-20",
+      "mitigation": "Weekly tracking with Legal & Employee Relations; parallel-running Dutch selection under review.",
+      "sub_stream_id": "ss12"
+    },
+    {
+      "id": "R-03",
+      "type": "risk",
+      "title": "Hub trainer capacity constrains overlapping migration waves",
+      "description": "Waves 2 and 3 now overlap by seven weeks. Hub trainer capacity supports one wave at a time without contract support.",
+      "severity": "H",
+      "owner": "Yusuf Demirci",
+      "raised": "2026-08-17",
+      "due": "2026-10-05",
+      "mitigation": "Contract trainer capacity costed and put to the steering committee; resequencing wave 3 held as fallback.",
+      "sub_stream_id": "ss41"
+    },
+    {
+      "id": "R-04",
+      "type": "risk",
+      "title": "Legacy vendor data quality below the migration threshold",
+      "description": "23% of legacy vendor records fail the new validation rules against an assumed 8%, threatening the WP4 cleansing cut-off.",
+      "severity": "H",
+      "owner": "Anneke de Vries",
+      "raised": "2026-07-27",
+      "due": "2026-10-09",
+      "mitigation": "Three additional data stewards requested; automated duplicate detection brought forward.",
+      "sub_stream_id": "ss24"
+    },
+    {
+      "id": "R-05",
+      "type": "risk",
+      "title": "Retention of critical knowledge holders through selection",
+      "description": "34 incumbents hold undocumented process knowledge and sit in scope for selection. Attrition before knowledge transfer would be unrecoverable within the plan.",
+      "severity": "M",
+      "owner": "Tobias Lindqvist",
+      "raised": "2026-06-15",
+      "due": "2026-10-30",
+      "mitigation": "Retention framework drafted with HR; knowledge capture prioritised for the 34 named roles.",
+      "sub_stream_id": "ss12"
+    },
+    {
+      "id": "R-06",
+      "type": "risk",
+      "title": "Single global cutover weekend leaves no fallback window",
+      "description": "The agreed cutover approach concentrates all five regions into one weekend, with rollback feasible only in the first 18 hours.",
+      "severity": "M",
+      "owner": "Rahul Menon",
+      "raised": "2026-08-03",
+      "due": "2026-12-04",
+      "mitigation": "Two full cutover rehearsals scheduled; go / no-go checkpoint set at hour 12.",
+      "sub_stream_id": "ss31"
+    },
+    {
+      "id": "I-01",
+      "type": "issue",
+      "title": "Wave 1 automation delivery four items behind plan",
+      "description": "11 of 18 wave 1 automations are in pre-production against a plan of 15, because four P2P automations were re-scoped when the P2P design reopened.",
+      "severity": "M",
+      "owner": "Sofia Marchetti",
+      "raised": "2026-08-10",
+      "due": "2026-10-02",
+      "mitigation": "Four automations proposed for wave 2; wave 1 benefit shortfall of 0.8 FTE accepted.",
+      "sub_stream_id": "ss32"
+    },
+    {
+      "id": "I-02",
+      "type": "issue",
+      "title": "Intercompany invoice routing design reopened",
+      "description": "Two design decisions closed at Gate 2 were reopened after the tax variant finding, leaving the intercompany routing rules unconfirmed.",
+      "severity": "M",
+      "owner": "Chiara Bellandi",
+      "raised": "2026-08-17",
+      "due": "2026-09-18",
+      "mitigation": "Decision paper to the Global Process Owner forum on 2026-09-04.",
+      "sub_stream_id": "ss22"
+    },
+    {
+      "id": "I-03",
+      "type": "issue",
+      "title": "Three training modules require rework",
+      "description": "Three of 22 curriculum modules were built against the superseded P2P design and must be rebuilt before the wave 1 delivery window.",
+      "severity": "L",
+      "owner": "Laura Nkemelu",
+      "raised": "2026-08-17",
+      "due": "2026-10-23",
+      "mitigation": "Rework scheduled into the September sprint; no impact on the delivery start date.",
+      "sub_stream_id": "ss42"
+    },
+    {
+      "id": "I-04",
+      "type": "issue",
+      "title": "128 incumbents not yet mapped to target roles",
+      "description": "512 of 640 incumbents are mapped. The unmapped population is concentrated in the two regions where consultation has not yet opened.",
+      "severity": "M",
+      "owner": "Tobias Lindqvist",
+      "raised": "2026-08-03",
+      "due": "2026-09-25",
+      "mitigation": "Regional HR leads to complete mapping ahead of consultation opening in each region.",
+      "sub_stream_id": "ss12"
+    },
+    {
+      "id": "D-01",
+      "type": "dependency",
+      "title": "Group Tax capacity for P2P country variants",
+      "description": "P2P build completion depends on two Group Tax analysts being available through October. Group Tax is concurrently supporting the statutory reporting change.",
+      "severity": "H",
+      "owner": "Marcus Adeyemi",
+      "raised": "2026-07-20",
+      "due": "2026-09-04",
+      "mitigation": "Steering committee decision requested; Group Tax lead has confirmed availability in principle.",
+      "sub_stream_id": "ss22"
+    },
+    {
+      "id": "D-02",
+      "type": "dependency",
+      "title": "Krakow fit-out completion gates wave 1 onboarding",
+      "description": "Wave 1 hub onboarding cannot start before the Krakow fit-out hands over. Handover is planned for 2026-10-16 against a wave 1 need date of 2026-10-26.",
+      "severity": "M",
+      "owner": "Priya Raghunathan",
+      "raised": "2026-06-29",
+      "due": "2026-10-16",
+      "mitigation": "Weekly contractor review; temporary space secured as a two-week buffer.",
+      "sub_stream_id": "ss13"
+    },
+    {
+      "id": "D-03",
+      "type": "dependency",
+      "title": "Master data cleansing cut-off gates migration validation",
+      "description": "Migration validation cannot begin until the cleansed vendor and customer masters are frozen on 2026-10-09.",
+      "severity": "H",
+      "owner": "Anneke de Vries",
+      "raised": "2026-07-06",
+      "due": "2026-10-09",
+      "mitigation": "Cut-off protected by the additional steward request; partial-freeze option assessed as fallback.",
+      "sub_stream_id": "ss24"
+    },
+    {
+      "id": "D-04",
+      "type": "dependency",
+      "title": "Information Security review of the automation platform",
+      "description": "Wave 2 automation build depends on the platform-level security review, which is scheduled behind two higher-priority Group IT reviews.",
+      "severity": "M",
+      "owner": "Sofia Marchetti",
+      "raised": "2026-08-10",
+      "due": "2026-09-30",
+      "mitigation": "Review slot confirmed for 2026-09-22; evidence pack submitted early.",
+      "sub_stream_id": "ss32"
+    },
+    {
+      "id": "A-01",
+      "type": "assumption",
+      "title": "Regional finance teams available for UAT",
+      "description": "Assumes regional finance teams provide 240 person-days for user acceptance testing in the October to December window, alongside the year-end close.",
+      "severity": "H",
+      "owner": "Daniel Okonkwo",
+      "raised": "2026-05-18",
+      "due": "2026-09-25",
+      "mitigation": "UAT scheduled around the close calendar; commitment to be confirmed at the September steering committee.",
+      "sub_stream_id": "ss23"
+    },
+    {
+      "id": "A-02",
+      "type": "assumption",
+      "title": "Desk ratio of 1.4 holds for both hubs",
+      "description": "The footprint business case assumes a 1.4 desk ratio. A lower ratio would require additional Krakow floor space at a cost of EUR 0.6m.",
+      "severity": "M",
+      "owner": "Priya Raghunathan",
+      "raised": "2026-05-25",
+      "due": "2026-11-20",
+      "mitigation": "Ratio validated against the hybrid working policy; reviewed again at wave 2 planning.",
+      "sub_stream_id": "ss13"
+    },
+    {
+      "id": "A-03",
+      "type": "assumption",
+      "title": "No statutory reporting changes land in scope during build",
+      "description": "Assumes no new statutory reporting requirement enters scope before Gate 4. One EU proposal is under consultation with a possible 2027 effective date.",
+      "severity": "L",
+      "owner": "Marcus Adeyemi",
+      "raised": "2026-04-20",
+      "due": "2026-11-20",
+      "mitigation": "Group Finance Policy monitors the consultation and reports monthly to the programme board.",
+      "sub_stream_id": "ss21"
+    },
+    {
+      "id": "A-04",
+      "type": "assumption",
+      "title": "Benefit baseline holds at the FY26 cost base",
+      "description": "Benefit measurement assumes the FY26 cost base as the baseline. A mid-year reorganisation in two regions could move the baseline.",
+      "severity": "M",
+      "owner": "Jonas Brenner",
+      "raised": "2026-06-08",
+      "due": "2026-12-18",
+      "mitigation": "Baseline frozen with Group Finance; any restatement to be handled as a change request.",
+      "sub_stream_id": "ss33"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "m01",
+      "name": "Service catalogue v1 published",
+      "date": "2026-04-24",
+      "sub_stream_id": "ss11",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m02",
+      "name": "Role architecture approved",
+      "date": "2026-05-08",
+      "sub_stream_id": "ss12",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m03",
+      "name": "ERP template gap analysis closed",
+      "date": "2026-05-15",
+      "sub_stream_id": "ss31",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m04",
+      "name": "Location assessment complete",
+      "date": "2026-05-22",
+      "sub_stream_id": "ss13",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m05",
+      "name": "R2R and P2P designs signed off",
+      "date": "2026-05-29",
+      "sub_stream_id": "ss21",
+      "status": "achieved",
+      "major": true
+    },
+    {
+      "id": "m06",
+      "name": "O2C design signed off",
+      "date": "2026-06-12",
+      "sub_stream_id": "ss23",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m07",
+      "name": "Automation opportunity list approved",
+      "date": "2026-06-19",
+      "sub_stream_id": "ss32",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m08",
+      "name": "Change impact assessment complete",
+      "date": "2026-06-26",
+      "sub_stream_id": "ss42",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m09",
+      "name": "Master data model published",
+      "date": "2026-06-26",
+      "sub_stream_id": "ss24",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m10",
+      "name": "Reporting design signed off",
+      "date": "2026-07-17",
+      "sub_stream_id": "ss33",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m11",
+      "name": "Migration wave plan agreed",
+      "date": "2026-07-24",
+      "sub_stream_id": "ss41",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m12",
+      "name": "SLAs agreed in all regions",
+      "date": "2026-07-31",
+      "sub_stream_id": "ss11",
+      "status": "achieved",
+      "major": true
+    },
+    {
+      "id": "m13",
+      "name": "Krakow lease signed",
+      "date": "2026-08-07",
+      "sub_stream_id": "ss13",
+      "status": "achieved",
+      "major": false
+    },
+    {
+      "id": "m14",
+      "name": "Wave 1 knowledge transfer starts",
+      "date": "2026-08-14",
+      "sub_stream_id": "ss41",
+      "status": "achieved",
+      "major": true
+    },
+    {
+      "id": "m15",
+      "name": "ERP template build complete",
+      "date": "2026-09-11",
+      "sub_stream_id": "ss31",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m16",
+      "name": "Control framework complete",
+      "date": "2026-09-11",
+      "sub_stream_id": "ss21",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m17",
+      "name": "P2P build complete",
+      "date": "2026-09-25",
+      "sub_stream_id": "ss22",
+      "status": "at-risk",
+      "major": true
+    },
+    {
+      "id": "m18",
+      "name": "Wave 1 automations in production",
+      "date": "2026-10-02",
+      "sub_stream_id": "ss32",
+      "status": "at-risk",
+      "major": false
+    },
+    {
+      "id": "m19",
+      "name": "Master data cleansing cut-off",
+      "date": "2026-10-09",
+      "sub_stream_id": "ss24",
+      "status": "at-risk",
+      "major": true
+    },
+    {
+      "id": "m20",
+      "name": "Krakow fit-out handover",
+      "date": "2026-10-16",
+      "sub_stream_id": "ss13",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m21",
+      "name": "Curriculum build complete",
+      "date": "2026-10-23",
+      "sub_stream_id": "ss42",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m22",
+      "name": "Wave 1 stability review passed",
+      "date": "2026-10-30",
+      "sub_stream_id": "ss41",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m23",
+      "name": "Integration test signed off",
+      "date": "2026-12-04",
+      "sub_stream_id": "ss31",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m24",
+      "name": "UAT signed off",
+      "date": "2026-12-11",
+      "sub_stream_id": "ss22",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m25",
+      "name": "Pilot close complete",
+      "date": "2026-11-27",
+      "sub_stream_id": "ss21",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m26",
+      "name": "Wave 2 knowledge transfer complete",
+      "date": "2026-12-18",
+      "sub_stream_id": "ss41",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m27",
+      "name": "Global cutover complete",
+      "date": "2027-01-08",
+      "sub_stream_id": "ss31",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m28",
+      "name": "Wave 3 live",
+      "date": "2027-01-29",
+      "sub_stream_id": "ss41",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m29",
+      "name": "Service review cycle 1 run to the new SLAs",
+      "date": "2026-11-13",
+      "sub_stream_id": "ss11",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m30",
+      "name": "Consultation concluded in all regions",
+      "date": "2026-10-30",
+      "sub_stream_id": "ss12",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m31",
+      "name": "Hub roles appointed",
+      "date": "2026-12-11",
+      "sub_stream_id": "ss12",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m32",
+      "name": "O2C build complete",
+      "date": "2026-09-25",
+      "sub_stream_id": "ss23",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m33",
+      "name": "Kuala Lumpur ramp complete",
+      "date": "2026-12-18",
+      "sub_stream_id": "ss13",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m34",
+      "name": "Data layer live in test",
+      "date": "2026-11-06",
+      "sub_stream_id": "ss33",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m35",
+      "name": "Performance dashboards live",
+      "date": "2027-01-22",
+      "sub_stream_id": "ss33",
+      "status": "on-track",
+      "major": true
+    },
+    {
+      "id": "m36",
+      "name": "Migration validation complete",
+      "date": "2027-01-08",
+      "sub_stream_id": "ss24",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m37",
+      "name": "Wave 1 training delivered",
+      "date": "2026-11-27",
+      "sub_stream_id": "ss42",
+      "status": "on-track",
+      "major": false
+    },
+    {
+      "id": "m38",
+      "name": "Wave 2 automations live",
+      "date": "2027-01-15",
+      "sub_stream_id": "ss32",
+      "status": "on-track",
+      "major": false
+    }
+  ],
+  "weekly_status": [
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss11",
+      "rag": "green",
+      "progress_pct": 78,
+      "headline": "Catalogue signed off in all five regions; focus moves to embedding SLAs in the service review",
+      "activities": [
+        "Published catalogue v1.2 covering all 46 services with owner, SLA and unit cost",
+        "Closed the last four SLA exceptions with the Nordics and Brazil controllers",
+        "Agreed the KPI baseline set (14 measures) with Group Finance Policy",
+        "Ran the service-review dry run with the WP2 process owners"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m29"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss11",
+      "rag": "green",
+      "progress_pct": 75,
+      "headline": "Closed the last four SLA exceptions with the Nordics and Brazil controllers",
+      "activities": [
+        "Closed the last four SLA exceptions with the Nordics and Brazil controllers",
+        "Agreed the KPI baseline set (14 measures) with Group Finance Policy",
+        "Ran the service-review dry run with the WP2 process owners",
+        "Reconciled catalogue scope against the WP4 migration waves"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m29"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss11",
+      "rag": "green",
+      "progress_pct": 72,
+      "headline": "Agreed the KPI baseline set (14 measures) with Group Finance Policy",
+      "activities": [
+        "Agreed the KPI baseline set (14 measures) with Group Finance Policy",
+        "Ran the service-review dry run with the WP2 process owners",
+        "Reconciled catalogue scope against the WP4 migration waves",
+        "Costed the catalogue against the FY26 GBS budget with Finance Operating Model"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m29"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss11",
+      "rag": "green",
+      "progress_pct": 69,
+      "headline": "Ran the service-review dry run with the WP2 process owners",
+      "activities": [
+        "Ran the service-review dry run with the WP2 process owners",
+        "Reconciled catalogue scope against the WP4 migration waves",
+        "Costed the catalogue against the FY26 GBS budget with Finance Operating Model",
+        "Walked the escalation model through with Regional Controllers"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m29"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss12",
+      "rag": "amber",
+      "progress_pct": 61,
+      "headline": "Works council consultation started two weeks late; selection window is now the binding constraint on Gate 4",
+      "activities": [
+        "Completed role profiles for all 640 target roles and banded them with HR",
+        "Opened works council consultation in Germany and the Netherlands",
+        "Modelled three span-of-control scenarios for the hub leadership layer",
+        "Mapped 512 of 640 incumbents to target roles; 128 remain unresolved"
+      ],
+      "decisions_needed": [
+        "Approve the retention framework for 34 critical knowledge holders before selection opens",
+        "Confirm whether the German consultation timetable may run in parallel with Dutch selection"
+      ],
+      "next_milestone_id": "m30"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss12",
+      "rag": "amber",
+      "progress_pct": 58,
+      "headline": "Opened works council consultation in Germany and the Netherlands; position remains under mitigation",
+      "activities": [
+        "Opened works council consultation in Germany and the Netherlands",
+        "Modelled three span-of-control scenarios for the hub leadership layer",
+        "Mapped 512 of 640 incumbents to target roles; 128 remain unresolved",
+        "Agreed the retention framework for 34 critical knowledge holders"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m30"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss12",
+      "rag": "amber",
+      "progress_pct": 55,
+      "headline": "Modelled three span-of-control scenarios for the hub leadership layer; position remains under mitigation",
+      "activities": [
+        "Modelled three span-of-control scenarios for the hub leadership layer",
+        "Mapped 512 of 640 incumbents to target roles; 128 remain unresolved",
+        "Agreed the retention framework for 34 critical knowledge holders",
+        "Briefed regional HR leads on the selection process and timetable"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m30"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss12",
+      "rag": "amber",
+      "progress_pct": 52,
+      "headline": "Mapped 512 of 640 incumbents to target roles; 128 remain unresolved; position remains under mitigation",
+      "activities": [
+        "Mapped 512 of 640 incumbents to target roles; 128 remain unresolved",
+        "Agreed the retention framework for 34 critical knowledge holders",
+        "Briefed regional HR leads on the selection process and timetable",
+        "Aligned role families with the WP2 process taxonomy"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m30"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss13",
+      "rag": "green",
+      "progress_pct": 72,
+      "headline": "Both hubs contracted on plan; Krakow fit-out is the only remaining critical path item",
+      "activities": [
+        "Signed the Krakow lease; fit-out contractor mobilised on site",
+        "Closed the Kuala Lumpur headcount ramp plan with Workplace & Real Estate",
+        "Refreshed the footprint business case with actual salary benchmarks",
+        "Confirmed nearshore Bogota as the Americas coverage option"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m20"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss13",
+      "rag": "green",
+      "progress_pct": 69,
+      "headline": "Closed the Kuala Lumpur headcount ramp plan with Workplace & Real Estate",
+      "activities": [
+        "Closed the Kuala Lumpur headcount ramp plan with Workplace & Real Estate",
+        "Refreshed the footprint business case with actual salary benchmarks",
+        "Confirmed nearshore Bogota as the Americas coverage option",
+        "Agreed the desk-ratio assumption at 1.4 with Workplace"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m20"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss13",
+      "rag": "green",
+      "progress_pct": 66,
+      "headline": "Refreshed the footprint business case with actual salary benchmarks",
+      "activities": [
+        "Refreshed the footprint business case with actual salary benchmarks",
+        "Confirmed nearshore Bogota as the Americas coverage option",
+        "Agreed the desk-ratio assumption at 1.4 with Workplace",
+        "Completed the labour-market risk review for both hubs"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m20"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss13",
+      "rag": "green",
+      "progress_pct": 63,
+      "headline": "Refreshed the footprint business case with actual salary benchmarks",
+      "activities": [
+        "Refreshed the footprint business case with actual salary benchmarks",
+        "Confirmed nearshore Bogota as the Americas coverage option",
+        "Agreed the desk-ratio assumption at 1.4 with Workplace",
+        "Completed the labour-market risk review for both hubs"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m13"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss21",
+      "rag": "green",
+      "progress_pct": 74,
+      "headline": "Control framework on track for Gate 3; pilot close scheduled for the October cycle",
+      "activities": [
+        "Standardised the close calendar to a 5+2 day cycle across all five regions",
+        "Rebuilt the journal taxonomy; 214 entry types reduced to 61",
+        "Completed control design for the close cycle and walked it through with External Audit",
+        "Agreed the account reconciliation threshold policy with Internal Controls"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m16"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss21",
+      "rag": "green",
+      "progress_pct": 71,
+      "headline": "Rebuilt the journal taxonomy; 214 entry types reduced to 61",
+      "activities": [
+        "Rebuilt the journal taxonomy; 214 entry types reduced to 61",
+        "Completed control design for the close cycle and walked it through with External Audit",
+        "Agreed the account reconciliation threshold policy with Internal Controls",
+        "Dry-ran the pilot close scenario with the Nordics team"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m16"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss21",
+      "rag": "green",
+      "progress_pct": 68,
+      "headline": "Completed control design for the close cycle and walked it through with External Audit",
+      "activities": [
+        "Completed control design for the close cycle and walked it through with External Audit",
+        "Agreed the account reconciliation threshold policy with Internal Controls",
+        "Dry-ran the pilot close scenario with the Nordics team",
+        "Mapped the flux analysis process onto the WP3 reporting layer"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m16"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss21",
+      "rag": "green",
+      "progress_pct": 65,
+      "headline": "Agreed the account reconciliation threshold policy with Internal Controls",
+      "activities": [
+        "Agreed the account reconciliation threshold policy with Internal Controls",
+        "Dry-ran the pilot close scenario with the Nordics team",
+        "Mapped the flux analysis process onto the WP3 reporting layer",
+        "Closed 18 of 23 design decisions logged at Gate 2"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m16"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss22",
+      "rag": "red",
+      "progress_pct": 52,
+      "headline": "Country tax variants were underestimated at design; build slips past Gate 3 without additional Group Tax capacity",
+      "activities": [
+        "Locked the three-way match tolerance policy across all regions",
+        "Reworked the invoice exception taxonomy after the tax logic finding",
+        "Rebuilt the Italy and Spain e-invoicing variants with Group Tax",
+        "Completed supplier master de-duplication design with WP2 Master Data"
+      ],
+      "decisions_needed": [
+        "Release two additional Group Tax analysts to P2P through October",
+        "Accept a Gate 3 conditional pass for P2P, or move the gate for all of WP2"
+      ],
+      "next_milestone_id": "m17"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss22",
+      "rag": "red",
+      "progress_pct": 50,
+      "headline": "Reworked the invoice exception taxonomy after the tax logic finding; position remains under mitigation",
+      "activities": [
+        "Reworked the invoice exception taxonomy after the tax logic finding",
+        "Rebuilt the Italy and Spain e-invoicing variants with Group Tax",
+        "Completed supplier master de-duplication design with WP2 Master Data",
+        "Held the touchless-rate baseline review; current global rate 41%"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m17"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss22",
+      "rag": "amber",
+      "progress_pct": 48,
+      "headline": "Rebuilt the Italy and Spain e-invoicing variants with Group Tax; position remains under mitigation",
+      "activities": [
+        "Rebuilt the Italy and Spain e-invoicing variants with Group Tax",
+        "Completed supplier master de-duplication design with WP2 Master Data",
+        "Held the touchless-rate baseline review; current global rate 41%",
+        "Agreed the approval matrix simplification from 9 levels to 4"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m17"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss22",
+      "rag": "amber",
+      "progress_pct": 46,
+      "headline": "Completed supplier master de-duplication design with WP2 Master Data; position remains under mitigation",
+      "activities": [
+        "Completed supplier master de-duplication design with WP2 Master Data",
+        "Held the touchless-rate baseline review; current global rate 41%",
+        "Agreed the approval matrix simplification from 9 levels to 4",
+        "Reopened two design decisions on intercompany invoice routing"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m17"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss23",
+      "rag": "green",
+      "progress_pct": 68,
+      "headline": "Design closed on plan; build tracking to Gate 3 with no open dependencies",
+      "activities": [
+        "Agreed a single dunning policy with the five regional credit committees",
+        "Designed the cash application matching rules with Treasury",
+        "Completed the billing consolidation design for the two legacy entities",
+        "Baselined DSO at 54 days as the benefit measurement start point"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m32"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss23",
+      "rag": "green",
+      "progress_pct": 65,
+      "headline": "Designed the cash application matching rules with Treasury",
+      "activities": [
+        "Designed the cash application matching rules with Treasury",
+        "Completed the billing consolidation design for the two legacy entities",
+        "Baselined DSO at 54 days as the benefit measurement start point",
+        "Closed the disputed-invoice workflow design with WP3"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m32"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss23",
+      "rag": "green",
+      "progress_pct": 62,
+      "headline": "Completed the billing consolidation design for the two legacy entities",
+      "activities": [
+        "Completed the billing consolidation design for the two legacy entities",
+        "Baselined DSO at 54 days as the benefit measurement start point",
+        "Closed the disputed-invoice workflow design with WP3",
+        "Ran the collections segmentation workshop with regional teams"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m32"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss23",
+      "rag": "green",
+      "progress_pct": 59,
+      "headline": "Completed the billing consolidation design for the two legacy entities",
+      "activities": [
+        "Completed the billing consolidation design for the two legacy entities",
+        "Baselined DSO at 54 days as the benefit measurement start point",
+        "Closed the disputed-invoice workflow design with WP3",
+        "Ran the collections segmentation workshop with regional teams"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m32"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss24",
+      "rag": "amber",
+      "progress_pct": 57,
+      "headline": "Legacy data quality is worse than assumed at design; cleansing needs three more stewards to hold the WP4 cut-off",
+      "activities": [
+        "Published the governed data model for vendor, customer and chart of accounts",
+        "Profiled the legacy vendor master; 23% of records fail the new validation rules",
+        "Stood up the data stewardship model with named owners per domain",
+        "Agreed the cleansing cut-off date with WP4 migration planning"
+      ],
+      "decisions_needed": [
+        "Fund three additional data stewards through the cleansing window to protect the migration cut-off"
+      ],
+      "next_milestone_id": "m19"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss24",
+      "rag": "amber",
+      "progress_pct": 55,
+      "headline": "Profiled the legacy vendor master; 23% of records fail the new validation rules; position remains under mitigation",
+      "activities": [
+        "Profiled the legacy vendor master; 23% of records fail the new validation rules",
+        "Stood up the data stewardship model with named owners per domain",
+        "Agreed the cleansing cut-off date with WP4 migration planning",
+        "Built the duplicate-detection ruleset with the WP3 platform team"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m19"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss24",
+      "rag": "amber",
+      "progress_pct": 53,
+      "headline": "Stood up the data stewardship model with named owners per domain; position remains under mitigation",
+      "activities": [
+        "Stood up the data stewardship model with named owners per domain",
+        "Agreed the cleansing cut-off date with WP4 migration planning",
+        "Built the duplicate-detection ruleset with the WP3 platform team",
+        "Escalated the cleansing resourcing gap to the programme board"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m19"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss24",
+      "rag": "amber",
+      "progress_pct": 51,
+      "headline": "Stood up the data stewardship model with named owners per domain; position remains under mitigation",
+      "activities": [
+        "Stood up the data stewardship model with named owners per domain",
+        "Agreed the cleansing cut-off date with WP4 migration planning",
+        "Built the duplicate-detection ruleset with the WP3 platform team",
+        "Escalated the cleansing resourcing gap to the programme board"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m19"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss31",
+      "rag": "green",
+      "progress_pct": 71,
+      "headline": "Template build completes into Gate 3; integration test scope agreed with all five regions",
+      "activities": [
+        "Closed 96 of 118 template gaps; the remainder are localisation-only",
+        "Passed the Group IT Architecture design authority review",
+        "Completed the chart of accounts alignment with WP2 Master Data",
+        "Built the interface inventory for the 31 downstream systems"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m15"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss31",
+      "rag": "green",
+      "progress_pct": 68,
+      "headline": "Passed the Group IT Architecture design authority review",
+      "activities": [
+        "Passed the Group IT Architecture design authority review",
+        "Completed the chart of accounts alignment with WP2 Master Data",
+        "Built the interface inventory for the 31 downstream systems",
+        "Agreed the regression test scope with Regional IT"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m15"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss31",
+      "rag": "green",
+      "progress_pct": 65,
+      "headline": "Completed the chart of accounts alignment with WP2 Master Data",
+      "activities": [
+        "Completed the chart of accounts alignment with WP2 Master Data",
+        "Built the interface inventory for the 31 downstream systems",
+        "Agreed the regression test scope with Regional IT",
+        "Confirmed the cutover approach as a single global weekend"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m15"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss31",
+      "rag": "green",
+      "progress_pct": 62,
+      "headline": "Completed the chart of accounts alignment with WP2 Master Data",
+      "activities": [
+        "Completed the chart of accounts alignment with WP2 Master Data",
+        "Built the interface inventory for the 31 downstream systems",
+        "Agreed the regression test scope with Regional IT",
+        "Confirmed the cutover approach as a single global weekend"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m15"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss32",
+      "rag": "amber",
+      "progress_pct": 55,
+      "headline": "Wave 1 is four automations behind because P2P design reopened; wave 2 scope is protected",
+      "activities": [
+        "Delivered 11 of 18 wave 1 automations into the pre-production environment",
+        "Passed the Information Security review for the document extraction service",
+        "Re-scoped four P2P automations pending the tax variant rework",
+        "Established the automation change-control process with the Automation CoE"
+      ],
+      "decisions_needed": [
+        "Confirm whether the four re-scoped P2P automations move to wave 2 or drop from scope"
+      ],
+      "next_milestone_id": "m18"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss32",
+      "rag": "amber",
+      "progress_pct": 53,
+      "headline": "Passed the Information Security review for the document extraction service; position remains under mitigation",
+      "activities": [
+        "Passed the Information Security review for the document extraction service",
+        "Re-scoped four P2P automations pending the tax variant rework",
+        "Established the automation change-control process with the Automation CoE",
+        "Measured wave 1 benefit at 6.2 FTE against a 7.0 FTE plan"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m18"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss32",
+      "rag": "amber",
+      "progress_pct": 51,
+      "headline": "Re-scoped four P2P automations pending the tax variant rework; position remains under mitigation",
+      "activities": [
+        "Re-scoped four P2P automations pending the tax variant rework",
+        "Established the automation change-control process with the Automation CoE",
+        "Measured wave 1 benefit at 6.2 FTE against a 7.0 FTE plan",
+        "Built the exception-handling pattern reused across all workflow automations"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m18"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss32",
+      "rag": "amber",
+      "progress_pct": 49,
+      "headline": "Re-scoped four P2P automations pending the tax variant rework; position remains under mitigation",
+      "activities": [
+        "Re-scoped four P2P automations pending the tax variant rework",
+        "Established the automation change-control process with the Automation CoE",
+        "Measured wave 1 benefit at 6.2 FTE against a 7.0 FTE plan",
+        "Built the exception-handling pattern reused across all workflow automations"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m18"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss33",
+      "rag": "green",
+      "progress_pct": 48,
+      "headline": "Design signed off against the KPI baseline; data layer build started on plan",
+      "activities": [
+        "Signed off the reporting design against the WP1 KPI baseline",
+        "Built the cost-to-serve model down to service level",
+        "Stood up the data layer for SLA measurement in the test environment",
+        "Agreed the single source of truth for headcount with HR Organisation Design"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m34"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss33",
+      "rag": "green",
+      "progress_pct": 46,
+      "headline": "Built the cost-to-serve model down to service level",
+      "activities": [
+        "Built the cost-to-serve model down to service level",
+        "Stood up the data layer for SLA measurement in the test environment",
+        "Agreed the single source of truth for headcount with HR Organisation Design",
+        "Completed the reporting requirements review with Regional Controllers"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m34"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss33",
+      "rag": "green",
+      "progress_pct": 44,
+      "headline": "Built the cost-to-serve model down to service level",
+      "activities": [
+        "Built the cost-to-serve model down to service level",
+        "Stood up the data layer for SLA measurement in the test environment",
+        "Agreed the single source of truth for headcount with HR Organisation Design",
+        "Completed the reporting requirements review with Regional Controllers"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m34"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss33",
+      "rag": "green",
+      "progress_pct": 42,
+      "headline": "Built the cost-to-serve model down to service level",
+      "activities": [
+        "Built the cost-to-serve model down to service level",
+        "Stood up the data layer for SLA measurement in the test environment",
+        "Agreed the single source of truth for headcount with HR Organisation Design",
+        "Completed the reporting requirements review with Regional Controllers"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m34"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss41",
+      "rag": "amber",
+      "progress_pct": 44,
+      "headline": "Wave 1 started on time, but wave 2 and 3 now overlap by seven weeks and hub trainer capacity is the constraint",
+      "activities": [
+        "Started wave 1 knowledge transfer for R2R and O2C in Krakow",
+        "Completed process documentation for 71 of 94 wave 1 activities",
+        "Agreed the wave stability criteria with Retained Finance Leads",
+        "Built the shadow-and-reverse-shadow schedule for wave 1"
+      ],
+      "decisions_needed": [
+        "Approve contract trainer capacity for the wave 2 and 3 overlap, or resequence wave 3"
+      ],
+      "next_milestone_id": "m22"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss41",
+      "rag": "amber",
+      "progress_pct": 42,
+      "headline": "Completed process documentation for 71 of 94 wave 1 activities; position remains under mitigation",
+      "activities": [
+        "Completed process documentation for 71 of 94 wave 1 activities",
+        "Agreed the wave stability criteria with Retained Finance Leads",
+        "Built the shadow-and-reverse-shadow schedule for wave 1",
+        "Confirmed the wave 2 scope against the WP2 rollout sequence"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m22"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss41",
+      "rag": "amber",
+      "progress_pct": 40,
+      "headline": "Agreed the wave stability criteria with Retained Finance Leads; position remains under mitigation",
+      "activities": [
+        "Agreed the wave stability criteria with Retained Finance Leads",
+        "Built the shadow-and-reverse-shadow schedule for wave 1",
+        "Confirmed the wave 2 scope against the WP2 rollout sequence",
+        "Flagged the wave 2 / wave 3 overlap as a capacity risk to the TMO"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m14"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss41",
+      "rag": "amber",
+      "progress_pct": 38,
+      "headline": "Agreed the wave stability criteria with Retained Finance Leads; position remains under mitigation",
+      "activities": [
+        "Agreed the wave stability criteria with Retained Finance Leads",
+        "Built the shadow-and-reverse-shadow schedule for wave 1",
+        "Confirmed the wave 2 scope against the WP2 rollout sequence",
+        "Flagged the wave 2 / wave 3 overlap as a capacity risk to the TMO"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m14"
+    },
+    {
+      "week": "2026-W35",
+      "sub_stream_id": "ss42",
+      "rag": "green",
+      "progress_pct": 53,
+      "headline": "Curriculum build tracking to plan; readiness index improving ahead of the wave 1 go-live",
+      "activities": [
+        "Completed the change impact assessment across all five regions",
+        "Built 14 of 22 curriculum modules against the WP2 process designs",
+        "Ran the second pulse survey; readiness index at 62, up from 54",
+        "Aligned the communications calendar with the consultation timetable"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m21"
+    },
+    {
+      "week": "2026-W34",
+      "sub_stream_id": "ss42",
+      "rag": "green",
+      "progress_pct": 51,
+      "headline": "Built 14 of 22 curriculum modules against the WP2 process designs",
+      "activities": [
+        "Built 14 of 22 curriculum modules against the WP2 process designs",
+        "Ran the second pulse survey; readiness index at 62, up from 54",
+        "Aligned the communications calendar with the consultation timetable",
+        "Trained the first cohort of 18 change champions"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m21"
+    },
+    {
+      "week": "2026-W33",
+      "sub_stream_id": "ss42",
+      "rag": "green",
+      "progress_pct": 49,
+      "headline": "Ran the second pulse survey; readiness index at 62, up from 54",
+      "activities": [
+        "Ran the second pulse survey; readiness index at 62, up from 54",
+        "Aligned the communications calendar with the consultation timetable",
+        "Trained the first cohort of 18 change champions",
+        "Reworked three modules after the P2P design reopened"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m21"
+    },
+    {
+      "week": "2026-W32",
+      "sub_stream_id": "ss42",
+      "rag": "green",
+      "progress_pct": 47,
+      "headline": "Ran the second pulse survey; readiness index at 62, up from 54",
+      "activities": [
+        "Ran the second pulse survey; readiness index at 62, up from 54",
+        "Aligned the communications calendar with the consultation timetable",
+        "Trained the first cohort of 18 change champions",
+        "Reworked three modules after the P2P design reopened"
+      ],
+      "decisions_needed": [],
+      "next_milestone_id": "m21"
+    }
+  ],
+  "governance": {
+    "steering_committee": [
+      {
+        "name": "Helena Marchand",
+        "role": "Chief Financial Officer",
+        "org": "Northwind Group"
+      },
+      {
+        "name": "Arun Sethi",
+        "role": "Group Financial Controller",
+        "org": "Northwind Group"
+      },
+      {
+        "name": "Katrin Osei",
+        "role": "Chief Human Resources Officer",
+        "org": "Northwind Group"
+      },
+      {
+        "name": "Peer Wallenberg",
+        "role": "Chief Information Officer",
+        "org": "Northwind Group"
+      },
+      {
+        "name": "Maria Fontana",
+        "role": "Regional CFO, Europe",
+        "org": "Northwind Europe"
+      },
+      {
+        "name": "Sam Okada",
+        "role": "Regional CFO, Asia Pacific",
+        "org": "Northwind APAC"
+      }
+    ],
+    "steering_cadence": "Monthly, third Thursday",
+    "programme_management": [
+      {
+        "name": "Nadia Bergström",
+        "role": "Programme Director",
+        "org": "Northwind GBS"
+      },
+      {
+        "name": "Felix Aumann",
+        "role": "Programme Manager",
+        "org": "Northwind GBS"
+      },
+      {
+        "name": "Grace Adeyinka",
+        "role": "PMO Lead",
+        "org": "Northwind GBS"
+      },
+      {
+        "name": "Tomasz Wieczorek",
+        "role": "Benefits & Reporting Lead",
+        "org": "Northwind GBS"
+      },
+      {
+        "name": "Ravi Balakrishnan",
+        "role": "Risk & Assurance Lead",
+        "org": "Northwind GBS"
+      }
+    ],
+    "pmo_cadence": "Weekly programme board, Tuesday",
+    "comments": [
+      "Steering committee meets monthly; two additional decision points are scheduled around Gate 3 and Gate 4.",
+      "Programme board reviews RAID weekly and escalates any high-severity item open beyond 14 days.",
+      "Work package leads hold delegated authority up to EUR 250k and one week of schedule float.",
+      "Regional CFOs sign off wave readiness for their own entities; the CFO signs the global go / no-go.",
+      "External Audit is consulted, not accountable, on the control framework and attends Gate 3 and Gate 5."
+    ]
+  }
+}

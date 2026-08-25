@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deckpilot"
+version = "0.1.0"
+description = "Consulting-grade PowerPoint status decks generated from structured programme data"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Moritz Richter" }]
+dependencies = [
+    "python-pptx>=1.0",
+    "pydantic>=2.7",
+    "anthropic>=0.40",
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+deckpilot = "deckpilot.cli:cli"
+
+[tool.setuptools.packages.find]
+include = ["deckpilot*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# generate.py is a hand-authored data table, not logic. Its programme narrative
+# reads better as one string per fact than wrapped to the code line length.
+"deckpilot/data/generate.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
