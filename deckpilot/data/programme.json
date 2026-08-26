@@ -1976,7 +1976,7 @@
         "name": "Hub run cost and retained coordination",
         "value": 0.1,
         "confidence": "high",
-        "owner": "Nadia Bergstrom",
+        "owner": "Nadia Bergström",
         "sub_stream_id": "ss41"
       }
     ]
@@ -2035,7 +2035,7 @@
         "budget": 2.0,
         "actual_to_date": 0.0,
         "forecast": 0.8,
-        "owner": "Nadia Bergstrom",
+        "owner": "Nadia Bergström",
         "is_contingency": true
       }
     ]

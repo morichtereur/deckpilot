@@ -159,10 +159,12 @@ def pdf(deck_path: Path, out: Path | None) -> None:
               show_default=True)
 @click.option("--check/--no-check", default=True, show_default=True)
 def render_one(layout: str, out: Path, check: bool) -> None:
+    # A single layout carries no reporting week of its own; the sample specs are
+    # built from the synthetic programme, so borrow its latest.
     spec = DeckSpec(
         title="deckpilot",
         subtitle=f"Single layout: {layout}",
-        week="0000-W00",
+        week=build_programme().weeks()[-1],
         slides=[SAMPLES[layout]],
     )
     deck.build_to(spec, out)

@@ -207,3 +207,87 @@ def test_the_agenda_survives_an_appendix_of_a_different_length():
         }
         for entry in agenda.entries:
             assert entry.page == dividers[entry.number]
+
+
+# -- document properties ---------------------------------------------------
+
+
+def test_the_deck_carries_our_properties_not_the_templates():
+    """python-pptx's default template ships someone else's name in the file."""
+    from deckpilot.data.generate import build_programme
+    from deckpilot.renderer import deck as deck_module
+    from deckpilot.specgen.fallback import build_deck_spec
+
+    spec = build_deck_spec(build_programme())
+    core = deck_module.build(spec).core_properties
+
+    assert core.last_modified_by == deck_module.GENERATOR
+    assert "Steve Canny" not in (core.last_modified_by or "")
+    assert core.title == spec.title
+    assert core.subject == spec.subtitle
+    assert spec.week in core.comments
+    assert core.created.year == int(spec.week[:4])
+
+
+def test_the_properties_do_not_move_between_builds():
+    """Dating the file to the build would make the same input produce a new file."""
+    from deckpilot.data.generate import build_programme
+    from deckpilot.renderer import deck as deck_module
+    from deckpilot.specgen.fallback import build_deck_spec
+
+    programme = build_programme()
+    first = deck_module.build(build_deck_spec(programme)).core_properties
+    second = deck_module.build(build_deck_spec(programme)).core_properties
+    assert (first.created, first.modified) == (second.created, second.modified)
+
+
+def test_the_dataset_spells_each_person_one_way():
+    """Two spellings of one name reads as two people."""
+    import json
+    import unicodedata
+    from pathlib import Path
+
+    import deckpilot
+
+    data = json.loads(
+        (Path(deckpilot.__file__).parent / "data" / "programme.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    names = {p["name"] for p in data["governance"]["steering_committee"]}
+    names |= {p["name"] for p in data["governance"]["programme_management"]}
+    for wp in data["work_packages"]:
+        names.add(wp["lead"])
+        names |= {ss["lead"] for ss in wp["sub_streams"]}
+    names |= {i["owner"] for i in data["raid"]}
+    names |= {b["owner"] for b in data["benefits"]}
+    names |= {lever["owner"] for lever in data["benefit_case"]["levers"]}
+    names |= {line["owner"] for line in data["budget"]["lines"]}
+
+    def fold(name: str) -> str:
+        stripped = unicodedata.normalize("NFKD", name)
+        return "".join(c for c in stripped if not unicodedata.combining(c)).lower()
+
+    collapsed: dict[str, set[str]] = {}
+    for name in names:
+        collapsed.setdefault(fold(name), set()).add(name)
+    duplicates = {k: v for k, v in collapsed.items() if len(v) > 1}
+    assert not duplicates, f"one person spelled several ways: {duplicates}"
+
+
+def test_the_deck_carries_no_inherited_preview_image():
+    """The template's thumbnail is a 2013 sample slide, shown by Finder as ours."""
+    import pathlib
+    import tempfile
+    import zipfile
+
+    from deckpilot.data.generate import build_programme
+    from deckpilot.renderer import deck as deck_module
+    from deckpilot.specgen.fallback import build_deck_spec
+
+    spec = build_deck_spec(build_programme())
+    with tempfile.TemporaryDirectory() as tmp:
+        path = pathlib.Path(tmp) / "deck.pptx"
+        deck_module.build_to(spec, path)
+        names = zipfile.ZipFile(path).namelist()
+    assert not any("thumbnail" in n for n in names), names

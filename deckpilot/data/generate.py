@@ -676,7 +676,7 @@ BENEFIT_LEVERS = [
     ("l4", "Technology and licence consolidation", -0.9, Confidence.LOW,
      "Rahul Menon", "ss31"),
     ("l5", "Hub run cost and retained coordination", 0.1, Confidence.HIGH,
-     "Nadia Bergstrom", "ss41"),
+     "Nadia Bergström", "ss41"),
 ]
 
 BENEFIT_CASE = {
@@ -700,7 +700,7 @@ BUDGET_LINES = [
     ("c3", "Internal programme team", 4.6, 2.7, 4.6, "Grace Adeyinka", False),
     ("c4", "Transition, travel and training", 2.4, 1.2, 2.9, "Yusuf Demirci", False),
     ("c5", "Site fit-out", 3.1, 1.6, 3.2, "Priya Raghunathan", False),
-    ("c6", "Contingency", 2.0, 0.0, 0.8, "Nadia Bergstrom", True),
+    ("c6", "Contingency", 2.0, 0.0, 0.8, "Nadia Bergström", True),
 ]
 
 STEERING_COMMITTEE = [
