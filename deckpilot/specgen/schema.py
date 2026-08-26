@@ -10,6 +10,7 @@ able to break the layout.
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -58,11 +59,46 @@ class WorkstreamCharterSpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 3. Roadmap gantt
+# --------------------------------------------------------------------------
+
+PhaseState = Literal["complete", "in-progress", "planned", "at-risk"]
+
+
+class GanttBar(Spec):
+    label: str = Field(default="", max_length=48)
+    start: date
+    end: date
+    status: PhaseState = "planned"
+
+
+class GanttMilestone(Spec):
+    name: str = Field(min_length=1, max_length=80)
+    date: date
+    major: bool = False
+
+
+class GanttRow(Spec):
+    work_package: str = Field(min_length=1, max_length=48)
+    sub_stream: str = Field(min_length=1, max_length=48)
+    bars: list[GanttBar] = Field(default_factory=list, max_length=8)
+    milestones: list[GanttMilestone] = Field(default_factory=list, max_length=8)
+
+
+class RoadmapGanttSpec(SlideBase):
+    layout: Literal["roadmap_gantt"] = "roadmap_gantt"
+    window_start: date
+    window_end: date
+    today: date | None = None
+    rows: list[GanttRow] = Field(min_length=2, max_length=16)
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
 AnySlideSpec = Annotated[
-    SectionDividerSpec | WorkstreamCharterSpec,
+    SectionDividerSpec | WorkstreamCharterSpec | RoadmapGanttSpec,
     Field(discriminator="layout"),
 ]
 

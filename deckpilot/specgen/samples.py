@@ -6,11 +6,58 @@ Working on the roadmap should not mean rebuilding twelve other slides first.
 
 from __future__ import annotations
 
+from datetime import date
+
+from deckpilot.data.generate import build_programme
 from deckpilot.specgen.schema import (
     CharterColumn,
+    GanttBar,
+    GanttMilestone,
+    GanttRow,
+    RoadmapGanttSpec,
     SectionDividerSpec,
     WorkstreamCharterSpec,
 )
+
+
+def _roadmap_sample() -> RoadmapGanttSpec:
+    """The roadmap is built from the real programme: hand-writing twelve rows of
+    phases and milestones would drift out of step with the data the moment either
+    changed."""
+    programme = build_programme()
+    rows = [
+        GanttRow(
+            work_package=wp.name,
+            sub_stream=ss.name,
+            bars=[
+                GanttBar(label=p.name, start=p.start, end=p.end, status=p.status.value)
+                for p in ss.phases
+            ],
+            milestones=[
+                GanttMilestone(name=m.name, date=m.date, major=m.major)
+                for m in programme.milestones
+                if m.sub_stream_id == ss.id
+            ],
+        )
+        for wp in programme.work_packages
+        for ss in wp.sub_streams
+    ]
+    return RoadmapGanttSpec(
+        title="Build completes into Gate 3 for three work packages; P2P and master data do not",
+        subtitle=(
+            "Programme roadmap | February 2026 to January 2027 | Position as at week 2026-W35"
+        ),
+        window_start=programme.start,
+        window_end=programme.end,
+        today=date(2026, 8, 26),
+        rows=rows,
+        considerations=[
+            "Gate 3 on 11 September is the binding date for P2P build and the control framework",
+            "Master data cleansing must freeze on 9 October or migration validation cannot start",
+            "Migration waves 2 and 3 overlap by seven weeks against single-wave trainer capacity",
+            "The global cutover is a single weekend, with rollback feasible for 18 hours only",
+        ],
+    )
 
 SAMPLES: dict[str, object] = {
     "section_divider": SectionDividerSpec(
@@ -86,4 +133,5 @@ SAMPLES: dict[str, object] = {
             "Two intercompany routing decisions closed at Gate 2 have been reopened",
         ],
     ),
+    "roadmap_gantt": _roadmap_sample(),
 }

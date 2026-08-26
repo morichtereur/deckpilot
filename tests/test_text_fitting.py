@@ -55,10 +55,26 @@ def test_wrap_preserves_the_words():
     assert " ".join(tm.wrap(LOREM, 140, 10)).split() == LOREM.split()
 
 
-def test_a_word_longer_than_the_line_is_broken_not_overhung():
+def test_a_word_longer_than_the_line_gets_its_own_line():
+    """PowerPoint does not hyphenate; an oversized word overhangs its box."""
     lines = tm.wrap("supercalifragilistic", 20, 10)
+    assert lines == ["supercalifragilistic"]
+    assert tm.text_width(lines[0], 10) > 20
+
+
+def test_break_words_splits_only_when_asked():
+    lines = tm.wrap("supercalifragilistic", 20, 10, break_words=True)
     assert len(lines) > 1
     assert all(tm.text_width(line, 10) <= 20.01 for line in lines)
+
+
+def test_fitting_rejects_a_size_whose_longest_word_overhangs(slide):
+    """A narrow column must shrink to suit its longest word, not break it."""
+    shape = box(slide, 0.85, 1.4)
+    fit_text(shape.text_frame, "Process Standardisation", 5, 12, where="wp label")
+    size = frame_size_pt(shape.text_frame)
+    avail_w = (shape.width - 2 * T.TEXT_INSET) / T.EMU_PER_PT
+    assert tm.widest_word("Process Standardisation", size) <= avail_w
 
 
 def test_smaller_type_needs_fewer_lines():

@@ -15,10 +15,18 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from pptx import Presentation
+from pptx.enum.dml import MSO_FILL
 
 from deckpilot.theme import tokens as T
 
 BLEED_PREFIX = "bleed:"
+# Overlays drawn deliberately on top of something else - a milestone diamond on
+# its roadmap bar. Exempt from the collision rule, not from the margin rules.
+MARKER_PREFIX = "marker:"
+# Background bands that other content sits on or beside - an alternating table
+# row tint. Content is meant to come right up to them, so the gap rule does not
+# apply; collisions and margins still do.
+SURFACE_PREFIX = "surface:"
 
 
 @dataclass(frozen=True)
@@ -39,6 +47,7 @@ class Rect:
     top: int
     width: int
     height: int
+    visible: bool = True  # has a fill or an outline; an empty text box does not
 
     @property
     def right(self) -> int:
@@ -71,12 +80,39 @@ def _rects(slide) -> list[Rect]:
     for shape in slide.shapes:
         if shape.width is None or shape.height is None:
             continue
-        out.append(Rect(shape.name, shape.left, shape.top, shape.width, shape.height))
+        out.append(
+            Rect(shape.name, shape.left, shape.top, shape.width, shape.height, _visible(shape))
+        )
     return out
+
+
+def _visible(shape) -> bool:
+    """Whether the shape paints anything of its own.
+
+    A text box has no fill and no outline, so it cannot crowd a neighbour: the
+    gap the linter would measure is invisible on the slide.
+    """
+    try:
+        if shape.fill.type is not None and shape.fill.type != MSO_FILL.BACKGROUND:
+            return True
+    except (AttributeError, TypeError, ValueError):
+        pass
+    try:
+        return shape.line.fill.type not in (None, MSO_FILL.BACKGROUND)
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 
 def _is_bleed(rect: Rect) -> bool:
     return rect.name.startswith(BLEED_PREFIX)
+
+
+def _is_marker(rect: Rect) -> bool:
+    return rect.name.startswith(MARKER_PREFIX)
+
+
+def _is_surface(rect: Rect) -> bool:
+    return rect.name.startswith(SURFACE_PREFIX)
 
 
 def _has_extent(rect: Rect) -> bool:
@@ -129,6 +165,8 @@ def check_slide(index: int, slide, *, overlap_tolerance: float = 0.12) -> list[F
         for b in rects[i + 1 :]:
             if _is_bleed(a) or _is_bleed(b):
                 continue
+            if _is_marker(a) or _is_marker(b):
+                continue
             overlap = a.intersection_area(b)
             if overlap == 0:
                 continue
@@ -151,7 +189,11 @@ def check_slide(index: int, slide, *, overlap_tolerance: float = 0.12) -> list[F
         for b in rects[i + 1 :]:
             if _is_bleed(a) or _is_bleed(b):
                 continue
-            if a.intersection_area(b):
+            if a.intersection_area(b) or _is_marker(a) or _is_marker(b):
+                continue
+            if not (a.visible and b.visible):
+                continue
+            if _is_surface(a) or _is_surface(b):
                 continue
             family = _family(a)
             if family is not None and family == _family(b):

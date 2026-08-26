@@ -12,6 +12,7 @@ reference for anything typographic.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import shutil
 import subprocess
 import sys
@@ -21,23 +22,49 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from deckpilot.renderer.qa import check_deck, report  # noqa: E402
 
+# Address Keynote by bundle id, not by name. Third-party apps ship with "Keynote"
+# in their name, and once Apple's Keynote is not already running, AppleScript will
+# happily resolve the name to one of them and then sit there not responding.
+KEYNOTE = "com.apple.iWork.Keynote"
+
+# Keynote's default AppleEvent timeout is about two minutes, which a large deck
+# can exceed while it lays out slides. Ask for longer rather than guessing.
 EXPORT_SCRIPT = """
 set inF to POSIX file "{src}"
 set outF to POSIX file "{dst}"
-tell application "Keynote"
-	set theDoc to open inF
-	delay 1
-	export theDoc to outF as slide images with properties {{image format:PNG, skipped slides:false}}
-	close theDoc saving no
-end tell
+with timeout of 900 seconds
+	tell application id "{app}"
+		set theDoc to open inF
+		delay 1
+		set opts to {{image format:PNG, skipped slides:false}}
+		export theDoc to outF as slide images with properties opts
+		close theDoc saving no
+	end tell
+end timeout
 """
 
 
+def _quit_keynote() -> None:
+    """Start from a clean slate.
+
+    A previous run that timed out can leave a document open, and Keynote will
+    then sit on a modal dialog instead of opening the next one - which looks
+    like a hang rather than an error.
+    """
+    with contextlib.suppress(subprocess.TimeoutExpired):
+        subprocess.run(
+            ["osascript", "-e", f'tell application id "{KEYNOTE}" to quit saving no'],
+            capture_output=True, text=True, timeout=30, check=False,
+        )
+    subprocess.run(["killall", "-9", "Keynote"], capture_output=True, check=False)
+
+
 def export_images(pptx: Path, out_dir: Path) -> list[Path]:
+    _quit_keynote()
     if out_dir.exists():
         shutil.rmtree(out_dir)
     out_dir.parent.mkdir(parents=True, exist_ok=True)
-    script = EXPORT_SCRIPT.format(src=pptx.resolve(), dst=out_dir.resolve())
+    script = EXPORT_SCRIPT.format(src=pptx.resolve(), dst=out_dir.resolve(), app=KEYNOTE)
     result = subprocess.run(
         ["osascript", "-"], input=script, capture_output=True, text=True, timeout=600
     )

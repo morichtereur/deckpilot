@@ -50,11 +50,25 @@ def text_width(text: str, size_pt: float, bold: bool = False) -> float:
     return total * BOLD_FACTOR if bold else total
 
 
-def wrap(text: str, width_pt: float, size_pt: float, bold: bool = False) -> list[str]:
+def widest_word(text: str, size_pt: float, bold: bool = False) -> float:
+    """Width of the longest unbreakable run in `text`.
+
+    PowerPoint does not hyphenate: a word wider than its box overhangs it. So a
+    box is only genuinely wide enough for a piece of text if it is wide enough
+    for that text's longest word.
+    """
+    words = text.split()
+    return max((text_width(w, size_pt, bold) for w in words), default=0.0)
+
+
+def wrap(
+    text: str, width_pt: float, size_pt: float, bold: bool = False, break_words: bool = False
+) -> list[str]:
     """Greedy word wrap, matching how PowerPoint breaks a paragraph.
 
-    A word longer than the line is broken mid-word rather than allowed to
-    overhang, which is also what PowerPoint does.
+    By default a word too wide for the line gets its own line and overhangs it,
+    which is what PowerPoint does. `break_words` splits it instead, which is only
+    useful when measuring how much of a string could be shown before truncating.
     """
     if width_pt <= 0:
         return [text]
@@ -70,20 +84,22 @@ def wrap(text: str, width_pt: float, size_pt: float, bold: bool = False) -> list
             if current:
                 lines.append(current)
                 current = ""
-            # The word alone may still be too wide for the line.
-            while text_width(word, size_pt, bold) > width_pt:
-                cut = len(word)
-                while cut > 1 and text_width(word[:cut], size_pt, bold) > width_pt:
-                    cut -= 1
-                lines.append(word[:cut])
-                word = word[cut:]
+            if break_words:
+                while text_width(word, size_pt, bold) > width_pt:
+                    cut = len(word)
+                    while cut > 1 and text_width(word[:cut], size_pt, bold) > width_pt:
+                        cut -= 1
+                    lines.append(word[:cut])
+                    word = word[cut:]
             current = word
         lines.append(current)
     return lines
 
 
-def line_count(text: str, width_pt: float, size_pt: float, bold: bool = False) -> int:
-    return len(wrap(text, width_pt, size_pt, bold))
+def line_count(
+    text: str, width_pt: float, size_pt: float, bold: bool = False, break_words: bool = False
+) -> int:
+    return len(wrap(text, width_pt, size_pt, bold, break_words))
 
 
 def block_height(
@@ -106,14 +122,14 @@ def truncate(text: str, width_pt: float, size_pt: float, max_lines: int, bold: b
     """Shorten `text` so it occupies at most `max_lines`, ending in an ellipsis."""
     if max_lines < 1:
         return ELLIPSIS
-    if line_count(text, width_pt, size_pt, bold) <= max_lines:
+    if line_count(text, width_pt, size_pt, bold, break_words=True) <= max_lines:
         return text
     lo, hi = 0, len(text)
     best = ""
     while lo <= hi:
         mid = (lo + hi) // 2
         candidate = text[:mid].rstrip() + ELLIPSIS
-        if line_count(candidate, width_pt, size_pt, bold) <= max_lines:
+        if line_count(candidate, width_pt, size_pt, bold, break_words=True) <= max_lines:
             best = candidate
             lo = mid + 1
         else:

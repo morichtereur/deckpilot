@@ -77,6 +77,23 @@ RAG_COLORS = {
     "neutral": STATUS_NEUTRAL,
 }
 
+# Roadmap bars carry schedule state, not RAG. Keeping them in the primary hue
+# family - with red reserved for genuine trouble - means a roadmap full of
+# healthy bars never looks like a wall of traffic lights.
+PHASE_COLORS = {
+    "complete": tint(SECONDARY, 0.42),
+    "in-progress": PRIMARY,
+    "planned": tint(GRAY_DARK, 0.72),
+    "at-risk": STATUS_RED,
+}
+
+PHASE_LABELS = {
+    "complete": "Complete",
+    "in-progress": "In progress",
+    "planned": "Planned",
+    "at-risk": "At risk",
+}
+
 SEVERITY_COLORS = {
     "H": STATUS_RED,
     "M": STATUS_AMBER,
@@ -139,6 +156,22 @@ CHIP_H = inches(0.17)
 TEXT_INSET = inches(0.07)  # internal padding inside text frames
 
 MIN_SHAPE_GAP = inches(0.10)  # smallest visual gap the QA linter tolerates
+
+# Roadmap metrics
+GANTT_WP_COL_W = inches(1.12)
+GANTT_SS_COL_W = inches(1.62)
+GANTT_HEADER_H = inches(0.30)
+GANTT_BAR_H_RATIO = 0.46  # of the row height, for a single-lane row
+GANTT_MULTILANE_H_RATIO = 0.76  # rows that stack parallel phases need more of the row
+GANTT_LANE_GAP = inches(0.022)
+GANTT_BAR_MIN_W = inches(0.09)
+GANTT_DIAMOND_D = inches(0.125)
+GANTT_LEGEND_H = inches(0.24)
+GANTT_LEGEND_GAP = inches(0.14)
+GANTT_LEGEND_SWATCH_W = inches(0.20)
+GANTT_LEGEND_ITEM_GAP = inches(0.26)
+GANTT_LABEL_PAD = inches(0.06)
+TODAY_LINE_PT = 1.5
 
 
 # --------------------------------------------------------------------------

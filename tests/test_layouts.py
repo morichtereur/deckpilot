@@ -147,3 +147,76 @@ def test_charter_survives_content_that_cannot_fit(caplog):
         slide = rendered(fat)
     assert errors(slide) == []
     assert "truncated" in caplog.text
+
+
+# -- roadmap gantt ---------------------------------------------------------
+
+
+def test_roadmap_is_geometrically_clean():
+    from deckpilot.renderer import roadmap_gantt
+
+    prs = new_deck()
+    slide = roadmap_gantt.render(prs, SAMPLES["roadmap_gantt"], page=3)
+    assert errors(slide, 3) == []
+
+
+def test_roadmap_bars_stay_inside_the_grid():
+    from deckpilot.renderer import roadmap_gantt
+    from deckpilot.renderer.timeline import MonthGrid
+
+    spec = SAMPLES["roadmap_gantt"]
+    prs = new_deck()
+    slide = roadmap_gantt.render(prs, spec, page=3)
+
+    grid_x = T.content_left() + T.GANTT_WP_COL_W + T.GANTT_SS_COL_W
+    grid_w = T.body_width_with_panel() - T.GANTT_WP_COL_W - T.GANTT_SS_COL_W
+    grid = MonthGrid(spec.window_start, spec.window_end, grid_x, grid_w)
+
+    bars = [s for s in slide.shapes if ":bar" in s.name]
+    assert bars
+    for bar in bars:
+        assert bar.left >= grid.x
+        assert bar.left + bar.width <= grid.right + 1
+
+
+def test_roadmap_stacks_phases_that_run_in_parallel():
+    """The migration row has overlapping waves and must not draw them on one line."""
+    from deckpilot.renderer import roadmap_gantt
+
+    spec = SAMPLES["roadmap_gantt"]
+    row_index = next(
+        i for i, r in enumerate(spec.rows) if r.sub_stream.startswith("Knowledge Transfer")
+    )
+    prs = new_deck()
+    slide = roadmap_gantt.render(prs, spec, page=3)
+    tops = {s.top for s in slide.shapes if s.name.startswith(f"row{row_index}:bar")}
+    assert len(tops) > 1
+
+
+def test_roadmap_marks_the_reporting_date_once():
+    from deckpilot.renderer import roadmap_gantt
+
+    prs = new_deck()
+    slide = roadmap_gantt.render(prs, SAMPLES["roadmap_gantt"], page=3)
+    # Month rules are hairlines; the reporting date is the one heavier vertical.
+    verticals = [
+        s for s in slide.shapes
+        if s.shape_type == 9 and s.width == 0 and s.height > T.inches(1)  # 9 = LINE
+    ]
+    assert len(verticals) > 1, "expected month rules as well"
+    heavy = [s for s in verticals if s.line.width.pt > T.HAIRLINE_PT]
+    assert len(heavy) == 1
+    assert heavy[0].line.color.rgb == T.SECONDARY
+
+
+def test_roadmap_drops_bars_outside_the_window():
+    from datetime import date
+
+    from deckpilot.renderer import roadmap_gantt
+
+    spec = SAMPLES["roadmap_gantt"].model_copy(
+        update={"window_start": date(2026, 6, 1), "window_end": date(2026, 9, 30)}
+    )
+    prs = new_deck()
+    slide = roadmap_gantt.render(prs, spec, page=3)
+    assert errors(slide, 3) == []

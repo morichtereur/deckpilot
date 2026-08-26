@@ -208,6 +208,8 @@ def _fits(paragraphs: list[str], avail_w: float, avail_h: float, size: float,
             style.space_after_pt,
         )
         return widest <= avail_w and height <= avail_h
+    if any(tm.widest_word(p, size, style.bold) > avail_w for p in paragraphs):
+        return False  # a word too wide for the box would overhang it
     return (
         tm.block_height(
             paragraphs, avail_w, size, style.bold, style.line_spacing, style.space_after_pt
