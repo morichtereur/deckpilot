@@ -177,5 +177,5 @@ def test_declared_heights_err_high_rather_than_low(rows):
             raid_table.PREFERRED_SIZE,
         )
         assert lines >= bare, row.id
-    assert raid_table.TABLE_LINE_HEIGHT > tm.LINE_HEIGHT_FACTOR
-    assert raid_table.WIDTH_SAFETY < 1.0
+    assert T.RAID_TABLE_LINE_HEIGHT > tm.LINE_HEIGHT_FACTOR
+    assert T.RAID_WIDTH_SAFETY < 1.0

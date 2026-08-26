@@ -38,7 +38,7 @@ MEMBER_STYLE = TextStyle(
 TEAM_STYLE = TextStyle(
     color=T.GRAY_DARK,
     bullet="–",  # an en dash: a team list is not a list of actions
-    bullet_indent=T.inches(0.10),
+    bullet_indent=T.BULLET_INDENT,
     anchor=MSO_ANCHOR.TOP,
     line_spacing=1.0,
     space_after_pt=2.0,
@@ -51,7 +51,7 @@ def _panelled_box(slide: Slide, x: int, y: int, w: int, h: int, title: str,
     add_rect(slide, x, y, w, h, fill=T.WHITE, line=T.GRAY_LIGHT, name=f"{key}:box")
     add_rect(slide, x, y, w, T.GOV_BOX_HEAD_H, fill=T.PRIMARY, name=f"{key}:head")
 
-    caption_w = int(w * 0.42) if caption else 0
+    caption_w = int(w * T.GOV_CAPTION_SHARE) if caption else 0
     title_w = w - caption_w - 2 * T.GOV_PAD
     head = add_textbox(
         slide, x + T.GOV_PAD, y, title_w, T.GOV_BOX_HEAD_H, name=f"{key}:title"
@@ -118,7 +118,7 @@ def _unit(slide: Slide, unit: GovernanceUnit, x: int, y: int, w: int, h: int,
           core_label: str, contributing_label: str, key: str) -> tuple[list, list, list]:
     """One work package: who does it, and who has to be brought along."""
     add_rect(slide, x, y, w, h, fill=T.WHITE, line=T.GRAY_LIGHT, name=f"{key}:box")
-    head_h = T.GOV_BOX_HEAD_H + T.inches(0.06)
+    head_h = T.GOV_BOX_HEAD_H + T.GOV_HEAD_EXTRA
     add_rect(slide, x, y, w, head_h, fill=T.PRIMARY, name=f"{key}:head")
 
     badge_y = y + (head_h - T.BADGE_D) // 2
@@ -126,7 +126,7 @@ def _unit(slide: Slide, unit: GovernanceUnit, x: int, y: int, w: int, h: int,
         slide, x + T.GOV_PAD, badge_y, unit.number,
         fill=T.WHITE, text_color=T.PRIMARY, name=f"{key}:badge",
     )
-    name_x = x + T.GOV_PAD + T.BADGE_D + T.inches(0.06)
+    name_x = x + T.GOV_PAD + T.BADGE_D + T.TIGHT_GAP
     name_w = x + w - name_x - T.GOV_PAD
     name = add_textbox(slide, name_x, y, name_w, head_h, name=f"{key}:name")
     header_request = FitRequest(

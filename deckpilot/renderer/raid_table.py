@@ -57,7 +57,7 @@ def _ordered(rows: list[RaidRow]) -> list[tuple[str, list[RaidRow]]]:
 def _cell(cell, text: str, size: float, *, bold=False, color=None, align=PP_ALIGN.LEFT,
           fill=None) -> None:
     cell.margin_left = cell.margin_right = Emu(T.RAID_CELL_PAD)
-    cell.margin_top = cell.margin_bottom = Emu(CELL_MARGIN)
+    cell.margin_top = cell.margin_bottom = Emu(T.RAID_CELL_MARGIN)
     cell.vertical_anchor = MSO_ANCHOR.MIDDLE
     if fill is None:
         cell.fill.background()
@@ -78,24 +78,21 @@ def _cell(cell, text: str, size: float, *, bold=False, color=None, align=PP_ALIG
     run.font.color.rgb = color if color is not None else T.GRAY_DARK
 
 
-CELL_MARGIN = T.inches(0.03)
 CANDIDATE_SIZES = [T.FS_DENSE, T.FS_DENSE - 0.5, T.FS_MICRO, T.FS_MICRO - 0.5, T.FS_MICRO - 1]
 PREFERRED_SIZE = CANDIDATE_SIZES[0]
-BALANCE_TOLERANCE = T.inches(0.02)
-WIDTH_SAFETY = 0.96  # measure against slightly less width than the column really has
 # A declared row height is a floor, not a ceiling: over-declare and the row is
 # simply as tall as asked, under-declare and the renderer grows it and pushes the
 # whole table down the slide. So both figures below err high on purpose, and the
 # rows are never opened out to fill the leftover - an earlier version did that and
 # the table walked into the footer, because filling to the last EMU leaves nothing
 # for the gap between a calibrated figure and a real renderer.
-ROW_OVERHEAD = T.inches(0.03)
+
 # A table cell's line box is markedly taller than a text box's - measured at
 # roughly 1.45x the font size against the 1.22x that text_metrics assumes for
 # ordinary frames. Using the text-box figure here under-declares every row, and
 # because a declared row height is a floor rather than a ceiling, the renderer
 # quietly grows each one and walks the table off the bottom of the slide.
-TABLE_LINE_HEIGHT = 1.48
+
 
 
 def _row_lines(row: RaidRow, widths: dict[str, int], size: float) -> int:
@@ -108,7 +105,8 @@ def _row_lines(row: RaidRow, widths: dict[str, int], size: float) -> int:
     Erring wide costs a little whitespace; erring narrow costs the slide.
     """
     def usable(key: str) -> float:
-        return (widths[key] - 2 * T.RAID_CELL_PAD) * WIDTH_SAFETY / T.EMU_PER_PT
+        usable = (widths[key] - 2 * T.RAID_CELL_PAD) * T.RAID_WIDTH_SAFETY
+        return usable / T.EMU_PER_PT
 
     return max(
         tm.line_count(text, usable(key), size)
@@ -132,11 +130,13 @@ def _plan(rows: list[RaidRow], widths: dict[str, int], groups: int,
     fixed = T.RAID_HEADER_H + groups * T.RAID_GROUP_H
     heights: list[int] = []
     for size in CANDIDATE_SIZES:
-        line_h = size * TABLE_LINE_HEIGHT * T.EMU_PER_PT
+        line_h = size * T.RAID_TABLE_LINE_HEIGHT * T.EMU_PER_PT
         heights = [
             max(
                 T.RAID_ROW_MIN_H,
-                int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN + ROW_OVERHEAD,
+                int(_row_lines(row, widths, size) * line_h)
+                + 2 * T.RAID_CELL_MARGIN
+                + T.RAID_ROW_OVERHEAD,
             )
             for row in rows
         ]
@@ -171,12 +171,14 @@ def _break_into_pages(
     its own rather than being deferred forever.
     """
     cap = available if available_cap is None else available_cap
-    line_h = size * TABLE_LINE_HEIGHT * T.EMU_PER_PT
+    line_h = size * T.RAID_TABLE_LINE_HEIGHT * T.EMU_PER_PT
 
     def height(row: RaidRow) -> int:
         return max(
             T.RAID_ROW_MIN_H,
-            int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN + ROW_OVERHEAD,
+            int(_row_lines(row, widths, size) * line_h)
+            + 2 * T.RAID_CELL_MARGIN
+            + T.RAID_ROW_OVERHEAD,
         )
 
     pages: list[Page] = []
@@ -239,7 +241,7 @@ def paginate(rows: list[RaidRow], total_width: int, available: int) -> list[Page
     target = len(pages)
     low, high = T.RAID_HEADER_H, available
     balanced = pages
-    while high - low > BALANCE_TOLERANCE:
+    while high - low > T.RAID_BALANCE_TOLERANCE:
         middle = (low + high) // 2
         trial = _break_into_pages(
             ordered, widths, PREFERRED_SIZE, middle, available_cap=available

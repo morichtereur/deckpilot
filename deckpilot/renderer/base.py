@@ -194,7 +194,7 @@ class TextStyle:
     line_spacing: float = T.LINE_SPACING
     space_after_pt: float = T.SPACE_AFTER_PT
     bullet: str | None = None
-    bullet_indent: int = T.inches(0.13)
+    bullet_indent: int = T.BULLET_INDENT
     wrap: bool = True  # False keeps a label on one line and shrinks it instead
 
 
@@ -622,7 +622,7 @@ def considerations_panel(
 
     add_rect(slide, x, top, w, height, fill=T.PANEL_BG, name="panel:bg")
 
-    head_h = T.inches(0.24)
+    head_h = T.PANEL_HEAD_H
     head = add_textbox(
         slide, x + T.PANEL_PAD, top + T.PANEL_PAD, w - 2 * T.PANEL_PAD, head_h, name="panel:heading"
     )
@@ -641,7 +641,7 @@ def considerations_panel(
         ),
     )
 
-    body_y = top + T.PANEL_PAD + head_h + T.inches(0.06)
+    body_y = top + T.PANEL_PAD + head_h + T.PANEL_HEAD_GAP
     body_h = height - (body_y - top) - T.PANEL_PAD
     body = add_textbox(
         slide, x + T.PANEL_PAD, body_y, w - 2 * T.PANEL_PAD, body_h, name="panel:body"

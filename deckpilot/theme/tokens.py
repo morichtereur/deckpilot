@@ -187,6 +187,51 @@ TEXT_INSET = inches(0.07)  # internal padding inside text frames
 
 MIN_SHAPE_GAP = inches(0.10)  # smallest visual gap the QA linter tolerates
 
+# Small shared spacings. Layouts reach for these rather than inventing their own:
+# the difference between a 0.06" and a 0.07" gap is invisible, and having both in
+# the codebase only makes it harder to change either.
+TIGHT_GAP = inches(0.06)  # between a shape and the label that belongs to it
+LABEL_GAP = inches(0.07)  # between a badge and the name beside it
+BULLET_INDENT = inches(0.12)  # hanging indent for a bulleted paragraph
+
+# Considerations panel internals
+PANEL_HEAD_H = inches(0.24)
+PANEL_HEAD_GAP = inches(0.06)
+
+# Section divider metrics
+DIVIDER_ACCENT_D = inches(7.2)
+DIVIDER_ACCENT_OFFSET_X = inches(1.6)  # how far past the right edge its centre sits
+DIVIDER_ACCENT_OFFSET_Y = inches(1.1)  # how far below the bottom edge its centre sits
+DIVIDER_ACCENT_TINT = 0.10
+DIVIDER_NUMBER_W = inches(3.0)
+# The box has to hold the numeral's full line box, or the fit shrinks the number
+# below the oversized size this layout exists for.
+DIVIDER_NUMBER_H = inches(1.92)
+DIVIDER_TITLE_W = inches(7.4)
+DIVIDER_TITLE_H = inches(0.56)
+DIVIDER_TITLE_KICKER_GAP = inches(0.14)
+DIVIDER_KICKER_H = inches(0.38)
+DIVIDER_BLOCK_LEFT = inches(1.0)
+DIVIDER_BLOCK_TOP = inches(2.10)
+
+# Workstream charter metrics
+CHARTER_LABEL_W = inches(0.40)  # the vertical label strip down the left of each band
+CHARTER_HEADER_H = inches(0.44)
+CHARTER_ICON_D = inches(0.16)
+CHARTER_ICON_BAR_H = inches(0.018)
+CHARTER_ICON_SHORT = 0.62  # the last rule of the list icon, as a fraction of the rest
+CHARTER_ICON_TOP_PAD = inches(0.10)
+CHARTER_BADGE_PAD = inches(0.10)
+CHARTER_CAPTION_GAP = inches(0.08)
+# The two bands split the height in proportion to what they hold; the clamp keeps
+# the proportion recognisable when one band is nearly empty.
+CHARTER_MIN_ACTIVITIES_SHARE = 0.46
+CHARTER_MAX_ACTIVITIES_SHARE = 0.74
+
+# Roadmap extras
+GANTT_MIN_LABEL_BAR_H = inches(0.13)  # a lane shallower than this carries no type
+GANTT_LEGEND_TEXT_PAD = inches(0.06)
+
 # Roadmap metrics
 GANTT_WP_COL_W = inches(1.12)
 GANTT_SS_COL_W = inches(1.62)
@@ -203,6 +248,15 @@ GANTT_LEGEND_ITEM_GAP = inches(0.26)
 GANTT_LABEL_PAD = inches(0.06)
 TODAY_LINE_PT = 1.5
 
+# Status overview extras
+STATUS_MILESTONE_H = inches(0.30)
+
+# Agenda extras
+AGENDA_CAPTION_H = inches(0.20)
+
+# Criteria columns extras
+CRITERIA_CAPTION_H = inches(0.18)
+
 # Governance chart metrics
 GOV_STEERING_W = inches(5.40)
 GOV_STEERING_H = inches(0.92)
@@ -215,12 +269,24 @@ GOV_PAD = inches(0.08)
 GOV_SECTION_GAP = inches(0.07)
 GOV_LABEL_H = inches(0.17)
 GOV_CONNECTOR_PT = 1.0
+GOV_HEAD_EXTRA = inches(0.06)  # a work package header runs a little deeper than a tier's
+GOV_CAPTION_SHARE = 0.42  # of the header width, given over to the cadence caption
 
 # RAID table metrics
 RAID_HEADER_H = inches(0.26)
 RAID_GROUP_H = inches(0.22)
 RAID_ROW_MIN_H = inches(0.24)
 RAID_CELL_PAD = inches(0.06)
+RAID_CELL_MARGIN = inches(0.03)
+RAID_BALANCE_TOLERANCE = inches(0.02)
+# A declared row height is a floor, not a ceiling: over-declare and the row is
+# simply as tall as asked, under-declare and the renderer grows it and pushes the
+# whole table down the slide. Both figures below err high on purpose.
+RAID_ROW_OVERHEAD = inches(0.03)
+RAID_WIDTH_SAFETY = 0.96  # measure against slightly less width than the column has
+# A table cell's line box is markedly taller than a text frame's - measured at
+# roughly 1.48x the font size against the 1.22x text_metrics assumes elsewhere.
+RAID_TABLE_LINE_HEIGHT = 1.48
 
 # Status overview metrics
 STATUS_CARD_HEAD_H = inches(0.34)
@@ -248,6 +314,8 @@ KPI_BAR_H = inches(0.17)
 KPI_TICK_W = inches(0.026)
 KPI_TICK_OVERHANG = inches(0.05)  # how far the marker stands proud of the track
 KPI_PAD = inches(0.07)
+KPI_LEGEND_GAP = inches(0.08)
+KPI_LEGEND_H = inches(0.20)
 KPI_BEHIND_TOLERANCE = 0.20  # attainment points behind delivery before a row goes red
 
 # Executive summary metrics
@@ -256,6 +324,10 @@ EXEC_RAG_W = inches(1.30)
 EXEC_MESSAGE_HEAD_H = inches(0.26)
 EXEC_PAD = inches(0.12)
 EXEC_GAP = inches(0.14)
+EXEC_MESSAGE_MIN_H = inches(1.05)
+EXEC_MESSAGE_MAX_SHARE = 0.62  # of the height below the verdict band
+EXEC_DECISIONS_MIN_H = inches(0.80)
+EXEC_DECISIONS_LABEL_H = inches(0.22)
 
 
 # --------------------------------------------------------------------------

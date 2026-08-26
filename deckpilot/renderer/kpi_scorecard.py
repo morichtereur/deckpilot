@@ -168,9 +168,9 @@ def render(prs: PresentationType, spec: KpiScorecardSpec, page: int) -> Slide:
     fit_group(numbers, T.FS_MIN_DENSE, T.FS_DENSE)
 
     # One line of key, because a marker nobody can decode is decoration.
-    legend_y = rows_top + row_h * len(spec.rows) + T.inches(0.08)
-    if legend_y + T.inches(0.20) <= T.content_bottom():
-        legend = add_textbox(slide, x, legend_y, total_w, T.inches(0.20), name="kpi:legend")
+    legend_y = rows_top + row_h * len(spec.rows) + T.KPI_LEGEND_GAP
+    if legend_y + T.KPI_LEGEND_H <= T.content_bottom():
+        legend = add_textbox(slide, x, legend_y, total_w, T.KPI_LEGEND_H, name="kpi:legend")
         fit_text(
             legend.text_frame,
             f"Marker shows {spec.expected_label.lower()}",

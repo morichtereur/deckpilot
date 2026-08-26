@@ -36,50 +36,43 @@ from deckpilot.renderer.base import (
 from deckpilot.specgen.schema import WorkstreamCharterSpec
 from deckpilot.theme import tokens as T
 
-LABEL_W = T.inches(0.40)  # the vertical label strip down the left of each band
-HEADER_H = T.inches(0.44)
-# The two bands split the height in proportion to what they hold, rather than by
-# a fixed ratio: an outcomes band with two bullets should not claim as much as an
-# activities band with five. The clamp keeps the proportion recognisable when one
-# band is nearly empty. Whatever height a band does not need for text is spread
-# across its bullet gaps by the group fit, not left at the bottom of the box.
-MIN_ACTIVITIES_SHARE = 0.46
-MAX_ACTIVITIES_SHARE = 0.74
-ICON_D = T.inches(0.16)
-ICON_TOP_PAD = T.inches(0.10)
-BADGE_PAD = T.inches(0.10)
+# Whatever height a band does not need for text is spread across its bullet gaps
+# by the group fit, rather than left at the bottom of the box.
 
 
 def _list_icon(slide: Slide, x: int, y: int, color, key: str) -> None:
     """Three stacked rules - a list. Native shapes, so it stays editable."""
-    bar_h = max(T.inches(0.018), ICON_D // 8)
-    step = ICON_D // 3
+    bar_h = max(T.CHARTER_ICON_BAR_H, T.CHARTER_ICON_D // 8)
+    step = T.CHARTER_ICON_D // 3
     for i in range(3):
-        width = ICON_D if i < 2 else int(ICON_D * 0.62)
+        width = T.CHARTER_ICON_D if i < 2 else int(T.CHARTER_ICON_D * T.CHARTER_ICON_SHORT)
         add_rect(slide, x, y + i * step, width, bar_h, fill=color, name=f"{key}:list{i}")
 
 
 def _target_icon(slide: Slide, x: int, y: int, color, key: str) -> None:
     """Two concentric rings and a centre - an outcome."""
     add_rect(
-        slide, x, y, ICON_D, ICON_D, line=color, line_pt=T.HAIRLINE_PT,
+        slide, x, y, T.CHARTER_ICON_D, T.CHARTER_ICON_D, line=color, line_pt=T.HAIRLINE_PT,
         shape_type=MSO_SHAPE.OVAL, name=f"{key}:ring-outer",
     )
-    inset = ICON_D // 3
+    inset = T.CHARTER_ICON_D // 3
     add_rect(
-        slide, x + inset, y + inset, ICON_D - 2 * inset, ICON_D - 2 * inset,
+        slide, x + inset, y + inset, T.CHARTER_ICON_D - 2 * inset, T.CHARTER_ICON_D - 2 * inset,
         fill=color, shape_type=MSO_SHAPE.OVAL, name=f"{key}:ring-inner",
     )
 
 
 def _band_label(slide: Slide, x: int, y: int, h: int, text: str, icon, key: str) -> None:
     """The vertical label strip: icon at the top, rotated caption beneath it."""
-    add_rect(slide, x, y, LABEL_W, h, fill=T.tint(T.PRIMARY, 0.90), name=f"{key}:strip")
-    icon(slide, x + (LABEL_W - ICON_D) // 2, y + ICON_TOP_PAD, T.PRIMARY, key)
+    add_rect(slide, x, y, T.CHARTER_LABEL_W, h, fill=T.tint(T.PRIMARY, 0.90), name=f"{key}:strip")
+    icon_x = x + (T.CHARTER_LABEL_W - T.CHARTER_ICON_D) // 2
+    icon(slide, icon_x, y + T.CHARTER_ICON_TOP_PAD, T.PRIMARY, key)
 
-    caption_top = y + ICON_TOP_PAD + ICON_D + T.inches(0.08)
-    caption_h = h - (caption_top - y) - T.inches(0.06)
-    caption = add_textbox(slide, x, caption_top, LABEL_W, caption_h, name=f"{key}:caption")
+    caption_top = y + T.CHARTER_ICON_TOP_PAD + T.CHARTER_ICON_D + T.CHARTER_CAPTION_GAP
+    caption_h = h - (caption_top - y) - T.TIGHT_GAP
+    caption = add_textbox(
+        slide, x, caption_top, T.CHARTER_LABEL_W, caption_h, name=f"{key}:caption"
+    )
     set_vertical_text(caption.text_frame)
     fit_text(
         caption.text_frame,
@@ -98,7 +91,7 @@ def _band_label(slide: Slide, x: int, y: int, h: int, text: str, icon, key: str)
         ),
         # The frame is rotated, so its usable extents are swapped.
         shape_w=caption_h,
-        shape_h=LABEL_W,
+        shape_h=T.CHARTER_LABEL_W,
     )
     caption.text_frame.margin_top = caption.text_frame.margin_bottom = Emu(0)
 
@@ -124,12 +117,16 @@ def _cell(
 def _band_heights(spec: WorkstreamCharterSpec, cell_w: int, available: int) -> tuple[int, int]:
     """Heights of the activities and outcomes bands, driven by their content."""
     size = T.FS_DENSE + 1
-    tallest_a = max(natural_height_pt(c.activities, cell_w, size, CELL_STYLE) for c in spec.columns)
-    tallest_o = max(natural_height_pt(c.outcomes, cell_w, size, CELL_STYLE) for c in spec.columns)
+    tallest_a = max(
+        natural_height_pt(c.activities, cell_w, size, CELL_STYLE) for c in spec.columns
+    )
+    tallest_o = max(
+        natural_height_pt(c.outcomes, cell_w, size, CELL_STYLE) for c in spec.columns
+    )
 
     usable = available - T.GUTTER
     share = tallest_a / (tallest_a + tallest_o)
-    share = min(MAX_ACTIVITIES_SHARE, max(MIN_ACTIVITIES_SHARE, share))
+    share = min(T.CHARTER_MAX_ACTIVITIES_SHARE, max(T.CHARTER_MIN_ACTIVITIES_SHARE, share))
     band_a = int(usable * share)
     return band_a, usable - band_a
 
@@ -142,14 +139,14 @@ def render(prs: PresentationType, spec: WorkstreamCharterSpec, page: int) -> Sli
     title_block(slide, spec.title, spec.subtitle, where=f"page {page}", width=total_w)
 
     # Columns start to the right of the vertical label strip.
-    grid_x = T.content_left() + LABEL_W + T.GUTTER
-    grid_w = total_w - LABEL_W - T.GUTTER
+    grid_x = T.content_left() + T.CHARTER_LABEL_W + T.GUTTER
+    grid_w = total_w - T.CHARTER_LABEL_W - T.GUTTER
     n = len(spec.columns)
     cw = T.col_w(n, total=grid_w)
 
     top = T.content_top()
-    bands_top = top + HEADER_H + T.GUTTER
-    bands_h = T.content_height() - HEADER_H - T.GUTTER
+    bands_top = top + T.CHARTER_HEADER_H + T.GUTTER
+    bands_h = T.content_height() - T.CHARTER_HEADER_H - T.GUTTER
     activities_h, outcomes_h = _band_heights(spec, cw, bands_h)
     outcomes_top = bands_top + activities_h + T.GUTTER
 
@@ -157,26 +154,26 @@ def render(prs: PresentationType, spec: WorkstreamCharterSpec, page: int) -> Sli
     header_requests: list[FitRequest] = []
     for i, column in enumerate(spec.columns):
         x = T.col_x(i, n, total=grid_w, x0=grid_x)
-        add_rect(slide, x, top, cw, HEADER_H, fill=T.PRIMARY, name=f"col{i}:header")
-        badge_y = top + (HEADER_H - T.BADGE_D) // 2
+        add_rect(slide, x, top, cw, T.CHARTER_HEADER_H, fill=T.PRIMARY, name=f"col{i}:header")
+        badge_y = top + (T.CHARTER_HEADER_H - T.BADGE_D) // 2
         number_badge(
             slide,
-            x + BADGE_PAD,
+            x + T.CHARTER_BADGE_PAD,
             badge_y,
             column.number,
             fill=T.WHITE,
             text_color=T.PRIMARY,
             name=f"col{i}:badge",
         )
-        name_x = x + BADGE_PAD + T.BADGE_D + T.inches(0.07)
-        name_w = x + cw - name_x - BADGE_PAD
-        name = add_textbox(slide, name_x, top, name_w, HEADER_H, name=f"col{i}:name")
+        name_x = x + T.CHARTER_BADGE_PAD + T.BADGE_D + T.LABEL_GAP
+        name_w = x + cw - name_x - T.CHARTER_BADGE_PAD
+        name = add_textbox(slide, name_x, top, name_w, T.CHARTER_HEADER_H, name=f"col{i}:name")
         header_requests.append(
             FitRequest(
                 name.text_frame,
                 [column.name],
                 name_w,
-                HEADER_H,
+                T.CHARTER_HEADER_H,
                 TextStyle(
                     bold=True,
                     color=T.WHITE,

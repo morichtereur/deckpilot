@@ -31,7 +31,7 @@ from deckpilot.theme import tokens as T
 ACTIVITY_STYLE = TextStyle(
     color=T.GRAY_DARK,
     bullet="•",
-    bullet_indent=T.inches(0.11),
+    bullet_indent=T.BULLET_INDENT,
     anchor=MSO_ANCHOR.TOP,
     line_spacing=T.LINE_SPACING,
     space_after_pt=T.SPACE_AFTER_PT,
@@ -48,15 +48,14 @@ def _grid(count: int) -> tuple[int, int]:
 def _progress_bar(slide: Slide, x: int, y: int, w: int, pct: int, key: str) -> None:
     """Two stacked rectangles: the track, then the filled portion."""
     label_w = T.STATUS_BAR_LABEL_W
-    track_w = w - label_w - T.inches(0.06)
+    track_w = w - label_w - T.TIGHT_GAP
     add_rect(slide, x, y, track_w, T.STATUS_BAR_H, fill=T.GRAY_LIGHT, name=f"{key}:track")
     filled = int(track_w * pct / 100)
     if filled > 0:
         add_rect(slide, x, y, filled, T.STATUS_BAR_H, fill=T.SECONDARY, name=f"marker:{key}fill")
 
     box = add_textbox(
-        slide, x + track_w + T.inches(0.06), y - T.inches(0.02), label_w,
-        T.STATUS_BAR_H + T.inches(0.04), name=f"{key}:pct",
+        slide, x + track_w + T.TIGHT_GAP, y, label_w, T.STATUS_BAR_H, name=f"{key}:pct",
     )
     fit_text(
         box.text_frame,
@@ -90,8 +89,8 @@ def _card(slide: Slide, card: StatusCard, x: int, y: int, w: int, h: int,
         card.rag.upper(), rag_colour, name=f"{key}:rag",
     )
 
-    name_x = x + T.STATUS_PAD + T.BADGE_D + T.inches(0.07)
-    name_w = chip_x - name_x - T.inches(0.06)
+    name_x = x + T.STATUS_PAD + T.BADGE_D + T.LABEL_GAP
+    name_w = chip_x - name_x - T.TIGHT_GAP
     name = add_textbox(slide, name_x, y, name_w, T.STATUS_CARD_HEAD_H, name=f"{key}:name")
     header = FitRequest(
         name.text_frame, [card.name], name_w, T.STATUS_CARD_HEAD_H,
@@ -105,7 +104,7 @@ def _card(slide: Slide, card: StatusCard, x: int, y: int, w: int, h: int,
     bar_y = y + T.STATUS_CARD_HEAD_H + T.STATUS_PAD
     _progress_bar(slide, inner_x, bar_y, inner_w, card.progress_pct, key)
 
-    milestone_h = T.inches(0.30) if card.next_milestone else 0
+    milestone_h = T.STATUS_MILESTONE_H if card.next_milestone else 0
     activities_y = bar_y + T.STATUS_BAR_H + T.STATUS_SECTION_GAP
     activities_h = (y + h) - activities_y - T.STATUS_PAD - milestone_h
     cell = add_textbox(slide, inner_x, activities_y, inner_w, activities_h,

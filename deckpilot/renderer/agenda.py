@@ -57,7 +57,7 @@ def render(prs: PresentationType, spec: AgendaSpec, page: int) -> Slide:
 
         text_x = x + T.AGENDA_PAD + T.AGENDA_NUMBER_W
         text_w = w - (text_x - x) - T.AGENDA_PAGE_W - 2 * T.AGENDA_PAD
-        caption_h = T.inches(0.20) if entry.caption else 0
+        caption_h = T.AGENDA_CAPTION_H if entry.caption else 0
         title_h = min(T.AGENDA_TITLE_H, row_h - caption_h)
         title_y = y + (row_h - title_h - caption_h) // 2
 

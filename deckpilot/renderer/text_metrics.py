@@ -39,11 +39,6 @@ LINE_HEIGHT_FACTOR = 1.22  # Calibri's default line box, as a multiple of font s
 ELLIPSIS = "…"
 
 
-def char_width(ch: str, size_pt: float, bold: bool = False) -> float:
-    w = _W.get(ch, _DEFAULT_W) / 1000.0 * size_pt
-    return w * BOLD_FACTOR if bold else w
-
-
 def text_width(text: str, size_pt: float, bold: bool = False) -> float:
     """Rendered width of `text` in points, unwrapped."""
     total = sum(_W.get(ch, _DEFAULT_W) for ch in text) / 1000.0 * size_pt

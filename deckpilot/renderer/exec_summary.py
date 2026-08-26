@@ -30,9 +30,6 @@ from deckpilot.theme import tokens as T
 # The message cards are sized to what they hold; the decisions band takes
 # whatever is left. A key message is two or three lines, and a card five times
 # that tall reads as a card someone forgot to fill in.
-MESSAGE_MIN_H = T.inches(1.05)
-MESSAGE_MAX_SHARE = 0.62  # of the height below the verdict band
-DECISIONS_MIN_H = T.inches(0.80)
 DETAIL_STYLE = TextStyle(
     color=T.GRAY_DARK, anchor=MSO_ANCHOR.TOP, line_spacing=T.LINE_SPACING, space_after_pt=0.0
 )
@@ -43,7 +40,7 @@ DECISIONS_STYLE = TextStyle(
     line_spacing=T.LINE_SPACING,
     space_after_pt=T.SPACE_AFTER_PT + 1,
 )
-DECISIONS_LABEL_H = T.inches(0.22)
+
 
 
 def _verdict_band(slide: Slide, spec: ExecSummarySpec, x: int, y: int, w: int, h: int) -> None:
@@ -105,15 +102,18 @@ def render(prs: PresentationType, spec: ExecSummarySpec, page: int) -> Slide:
         int(tallest * T.EMU_PER_PT) + T.EXEC_MESSAGE_HEAD_H + 2 * T.EXEC_PAD
     )
     if spec.decisions:
-        messages_h = max(MESSAGE_MIN_H, min(wanted, int(rest_h * MESSAGE_MAX_SHARE)))
+        messages_h = max(
+            T.EXEC_MESSAGE_MIN_H, min(wanted, int(rest_h * T.EXEC_MESSAGE_MAX_SHARE))
+        )
         # The decisions band hugs its bullets too. Every block on this slide is
         # sized to its content and the page simply ends where the content does;
         # a half-empty grey box is worse than white space.
         needed = natural_height_pt(
             list(spec.decisions), w - 2 * T.EXEC_PAD, T.FS_BODY, DECISIONS_STYLE
         )
-        decisions_h = int(needed * T.EMU_PER_PT) + DECISIONS_LABEL_H + T.EXEC_PAD
-        decisions_h = max(DECISIONS_MIN_H, min(decisions_h, rest_h - messages_h - T.EXEC_GAP))
+        decisions_h = int(needed * T.EMU_PER_PT) + T.EXEC_DECISIONS_LABEL_H + T.EXEC_PAD
+        room = rest_h - messages_h - T.EXEC_GAP
+        decisions_h = max(T.EXEC_DECISIONS_MIN_H, min(decisions_h, room))
     else:
         messages_h = rest_h
         decisions_h = 0
@@ -156,7 +156,7 @@ def render(prs: PresentationType, spec: ExecSummarySpec, page: int) -> Slide:
     if spec.decisions:
         dy = rest_top + messages_h + T.EXEC_GAP
         add_rect(slide, x, dy, w, decisions_h, fill=T.PANEL_BG, name="decisions:box")
-        label_h = DECISIONS_LABEL_H
+        label_h = T.EXEC_DECISIONS_LABEL_H
         label = add_textbox(
             slide, x + T.EXEC_PAD, dy + T.EXEC_PAD // 2, w - 2 * T.EXEC_PAD, label_h,
             name="decisions:label",

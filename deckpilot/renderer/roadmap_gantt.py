@@ -202,7 +202,7 @@ def _bars(slide: Slide, rows: list[GanttRow], grid: MonthGrid, rows_top: int, ro
                 slide, x, y, w, bar_h,
                 fill=T.PHASE_COLORS[bar.status], rounded=True, name=f"row{i}:bar{j}",
             )
-            if not bar.label or bar_h < T.inches(0.13):
+            if not bar.label or bar_h < T.GANTT_MIN_LABEL_BAR_H:
                 continue  # a stacked lane is too shallow to carry type
             label_w = int(tm.text_width(bar.label, BAR_LABEL_PT) * T.EMU_PER_PT)
             offset = _label_offset(row, grid, x, w, label_w)
@@ -287,7 +287,7 @@ def _legend(slide: Slide, x: int, y: int, width: int) -> None:
                 color=color, width_pt=T.TODAY_LINE_PT,
             )
         text_x = cursor + swatch_w + T.GANTT_LABEL_PAD
-        text_w = int(tm.text_width(label, T.FS_MICRO) * T.EMU_PER_PT) + T.inches(0.06)
+        text_w = int(tm.text_width(label, T.FS_MICRO) * T.EMU_PER_PT) + T.GANTT_LEGEND_TEXT_PAD
         box = add_textbox(slide, text_x, y, text_w, T.GANTT_LEGEND_H, name=f"legend{i}:label")
         fit_text(
             box.text_frame,

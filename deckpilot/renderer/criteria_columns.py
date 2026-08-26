@@ -37,7 +37,7 @@ STATE_COLORS = {
 BODY_STYLE = TextStyle(
     color=T.GRAY_DARK,
     bullet="•",
-    bullet_indent=T.inches(0.12),
+    bullet_indent=T.BULLET_INDENT,
     anchor=MSO_ANCHOR.TOP,
     line_spacing=T.LINE_SPACING,
     space_after_pt=T.SPACE_AFTER_PT,
@@ -65,7 +65,7 @@ def render(prs: PresentationType, spec: CriteriaColumnsSpec, page: int) -> Slide
         inner_x = x + T.CRITERIA_PAD
         inner_w = cw - 2 * T.CRITERIA_PAD
 
-        caption_h = T.inches(0.18) if column.caption else 0
+        caption_h = T.CRITERIA_CAPTION_H if column.caption else 0
         question_h = T.CRITERIA_HEAD_H - caption_h
         question = add_textbox(slide, inner_x, top, inner_w, question_h, name=f"col{i}:question")
         questions.append(
