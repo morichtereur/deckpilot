@@ -40,6 +40,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 # generate.py is a hand-authored data table, not logic. Its programme narrative
 # reads better as one string per fact than wrapped to the code line length.
 "deckpilot/data/generate.py" = ["E501"]
+# samples.py holds slide copy - action titles read better whole than wrapped.
+"deckpilot/specgen/samples.py" = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

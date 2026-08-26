@@ -220,3 +220,69 @@ def test_roadmap_drops_bars_outside_the_window():
     prs = new_deck()
     slide = roadmap_gantt.render(prs, spec, page=3)
     assert errors(slide, 3) == []
+
+
+# -- governance chart ------------------------------------------------------
+
+
+def test_governance_chart_is_geometrically_clean():
+    from deckpilot.renderer import governance_chart
+
+    prs = new_deck()
+    slide = governance_chart.render(prs, SAMPLES["governance_chart"], page=4)
+    assert errors(slide, 4) == []
+
+
+@pytest.mark.parametrize("n", [2, 3, 4, 5])
+def test_governance_chart_is_clean_at_every_supported_unit_count(n):
+    from deckpilot.renderer import governance_chart
+
+    base = SAMPLES["governance_chart"]
+    units = [base.units[i % len(base.units)] for i in range(n)]
+    spec = base.model_copy(update={"units": units})
+    prs = new_deck()
+    assert errors(governance_chart.render(prs, spec, page=4), 4) == []
+
+
+def test_governance_tiers_are_connected_by_native_lines():
+    from deckpilot.renderer import governance_chart
+
+    prs = new_deck()
+    slide = governance_chart.render(prs, SAMPLES["governance_chart"], page=4)
+    lines = [s for s in slide.shapes if s.shape_type == 9]  # 9 = LINE
+    # Two drops from the tiers, one distribution bus, one drop per unit.
+    assert len(lines) == 3 + len(SAMPLES["governance_chart"].units)
+    assert all(s.line.color.rgb == T.SECONDARY for s in lines)
+
+
+def test_governance_units_hang_below_the_management_box():
+    from deckpilot.renderer import governance_chart
+
+    prs = new_deck()
+    slide = governance_chart.render(prs, SAMPLES["governance_chart"], page=4)
+    mgmt = next(s for s in slide.shapes if s.name == "pmo:box")
+    units = [s for s in slide.shapes if s.name.endswith(":box") and s.name.startswith("unit")]
+    assert units
+    assert all(u.top > mgmt.top + mgmt.height for u in units)
+
+
+def test_governance_tiers_share_one_member_size():
+    from deckpilot.renderer import governance_chart
+
+    prs = new_deck()
+    slide = governance_chart.render(prs, SAMPLES["governance_chart"], page=4)
+    sizes = {
+        s.text_frame.paragraphs[0].runs[0].font.size.pt
+        for s in slide.shapes
+        if ":members" in s.name
+    }
+    assert len(sizes) == 1
+
+
+def test_governance_comments_panel_is_labelled_comments():
+    from deckpilot.renderer import governance_chart
+
+    prs = new_deck()
+    slide = governance_chart.render(prs, SAMPLES["governance_chart"], page=4)
+    heading = next(s for s in slide.shapes if s.name == "panel:heading")
+    assert heading.text_frame.paragraphs[0].runs[0].text == "Comments"

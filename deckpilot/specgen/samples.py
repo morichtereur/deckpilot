@@ -14,6 +14,9 @@ from deckpilot.specgen.schema import (
     GanttBar,
     GanttMilestone,
     GanttRow,
+    GovernanceBox,
+    GovernanceChartSpec,
+    GovernanceUnit,
     RoadmapGanttSpec,
     SectionDividerSpec,
     WorkstreamCharterSpec,
@@ -58,6 +61,40 @@ def _roadmap_sample() -> RoadmapGanttSpec:
             "The global cutover is a single weekend, with rollback feasible for 18 hours only",
         ],
     )
+
+def _governance_sample() -> GovernanceChartSpec:
+    programme = build_programme()
+    gov = programme.governance
+    return GovernanceChartSpec(
+        title="Decision rights sit with the steering committee; delivery sits with four work packages",
+        subtitle="Programme governance | Escalation runs weekly through the programme board",
+        steering=GovernanceBox(
+            title="Steering committee",
+            caption=gov.steering_cadence,
+            members=[f"{p.name} - {p.role}" for p in gov.steering_committee],
+        ),
+        programme_management=GovernanceBox(
+            title="Programme management",
+            caption=gov.pmo_cadence,
+            members=[f"{p.name} - {p.role}" for p in gov.programme_management],
+        ),
+        units=[
+            GovernanceUnit(
+                number=str(wp.number),
+                name=wp.name,
+                core_team=[
+                    f"{t.name} ({t.note})" if t.note else t.name for t in wp.core_team
+                ],
+                contributing_teams=[
+                    f"{t.name} ({t.note})" if t.note else t.name
+                    for t in wp.contributing_teams
+                ],
+            )
+            for wp in programme.work_packages
+        ],
+        considerations=gov.comments[:4],
+    )
+
 
 SAMPLES: dict[str, object] = {
     "section_divider": SectionDividerSpec(
@@ -134,4 +171,5 @@ SAMPLES: dict[str, object] = {
         ],
     ),
     "roadmap_gantt": _roadmap_sample(),
+    "governance_chart": _governance_sample(),
 }

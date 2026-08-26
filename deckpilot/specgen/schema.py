@@ -94,11 +94,38 @@ class RoadmapGanttSpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 4. Governance chart
+# --------------------------------------------------------------------------
+
+
+class GovernanceBox(Spec):
+    title: str = Field(min_length=1, max_length=48)
+    caption: str | None = Field(default=None, max_length=48)
+    members: list[str] = Field(min_length=1, max_length=8)
+
+
+class GovernanceUnit(Spec):
+    number: str = Field(min_length=1, max_length=3)
+    name: str = Field(min_length=1, max_length=48)
+    core_team: list[str] = Field(min_length=1, max_length=5)
+    contributing_teams: list[str] = Field(min_length=1, max_length=6)
+
+
+class GovernanceChartSpec(SlideBase):
+    layout: Literal["governance_chart"] = "governance_chart"
+    steering: GovernanceBox
+    programme_management: GovernanceBox
+    units: list[GovernanceUnit] = Field(min_length=2, max_length=5)
+    core_label: str = "Core team"
+    contributing_label: str = "Contributing teams"
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
 AnySlideSpec = Annotated[
-    SectionDividerSpec | WorkstreamCharterSpec | RoadmapGanttSpec,
+    SectionDividerSpec | WorkstreamCharterSpec | RoadmapGanttSpec | GovernanceChartSpec,
     Field(discriminator="layout"),
 ]
 

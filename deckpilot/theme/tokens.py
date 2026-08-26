@@ -203,6 +203,19 @@ GANTT_LEGEND_ITEM_GAP = inches(0.26)
 GANTT_LABEL_PAD = inches(0.06)
 TODAY_LINE_PT = 1.5
 
+# Governance chart metrics
+GOV_STEERING_W = inches(5.40)
+GOV_STEERING_H = inches(0.92)
+GOV_MANAGEMENT_W = inches(5.40)
+GOV_MANAGEMENT_H = inches(0.84)
+GOV_BOX_HEAD_H = inches(0.26)
+GOV_DROP = inches(0.26)  # vertical run between one tier and the next
+GOV_BUS_DROP = inches(0.30)  # from the management box down to the distribution bus
+GOV_PAD = inches(0.08)
+GOV_SECTION_GAP = inches(0.07)
+GOV_LABEL_H = inches(0.17)
+GOV_CONNECTOR_PT = 1.0
+
 
 # --------------------------------------------------------------------------
 # Grid helpers
