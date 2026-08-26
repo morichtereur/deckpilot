@@ -22,13 +22,16 @@ from deckpilot.specgen.schema import (
     BenefitsBridgeSpec,
     BridgeStep,
     CharterColumn,
+    CostRow,
     CriteriaColumn,
     CriteriaColumnsSpec,
     DeckSpec,
     ExecSummarySpec,
+    FinancialSummarySpec,
     GanttBar,
     GanttMilestone,
     GanttRow,
+    Gauge,
     GovernanceBox,
     GovernanceChartSpec,
     GovernanceUnit,
@@ -496,6 +499,124 @@ def benefits_bridge(programme: Programme, week: str) -> BenefitsBridgeSpec | Non
     )
 
 
+# A financial table keeps its decimal places and drops the unit: "6.8" and "2.0"
+# line up, "6.8 EUR m" and "2 EUR m" do not, and the unit is already in the
+# subtitle. Anything inside half a rounding step of zero is shown as a dash
+# rather than as "-0.0", which reads like a defect.
+ROUNDING_FLOOR = 0.05
+
+
+def _fixed(value: float) -> str:
+    return f"{value:.1f}"
+
+
+def _cost_row(line, emphasis: bool = False) -> CostRow:
+    variance = 0.0 if abs(line.variance) < ROUNDING_FLOOR else line.variance
+    return CostRow(
+        category=line.category,
+        budget=_fixed(line.budget),
+        actual=_fixed(line.actual_to_date),
+        forecast=_fixed(line.forecast),
+        variance=f"{variance:+.1f}" if variance else "-",
+        variance_value=variance,
+        emphasis=emphasis,
+    )
+
+
+def financial_summary(programme: Programme, week: str) -> FinancialSummarySpec | None:
+    """Budget against forecast, and what the contingency is paying for."""
+    budget = programme.budget
+    if budget is None:
+        return None
+
+    unit = budget.unit
+    rows = [_cost_row(line, emphasis=line.is_contingency) for line in budget.lines]
+
+    class _Total:
+        category = "Total programme cost"
+        is_contingency = False
+
+    total_line = _Total()
+    total_line.budget = budget.total("budget")
+    total_line.actual_to_date = budget.total("actual_to_date")
+    total_line.forecast = budget.total("forecast")
+    total_line.variance = budget.variance
+    total = _cost_row(total_line, emphasis=True)
+
+    elapsed = programme.elapsed_fraction(week_end(week))
+    drawn = budget.contingency_drawn
+    gauges = [
+        Gauge(label="Contingency drawn", fraction=drawn, value=f"{drawn:.0%}"),
+        Gauge(label="Programme elapsed", fraction=elapsed, value=f"{elapsed:.0%}"),
+    ]
+
+    overruns = sorted(
+        (line for line in budget.delivery_lines if line.variance > 0),
+        key=lambda line: line.variance,
+        reverse=True,
+    )
+    if drawn > elapsed:
+        title = (
+            f"The programme forecasts on budget, but contingency is {drawn:.0%} drawn "
+            f"at {elapsed:.0%} elapsed"
+        )
+    elif budget.variance > 0:
+        title = (
+            f"Forecast is {budget.variance:+.1f} {unit} over an approved "
+            f"{_fixed(budget.total('budget'))} {unit}"
+        )
+    else:
+        title = (
+            f"The programme forecasts on budget with contingency {drawn:.0%} drawn "
+            f"at {elapsed:.0%} elapsed"
+        )
+
+    considerations = []
+    if overruns:
+        considerations.append(
+            f"{overruns[0].category} carries the largest overrun at "
+            f"{overruns[0].variance:+.1f} {unit}, owned by {overruns[0].owner}"
+        )
+        if len(overruns) > 1:
+            considerations.append(
+                f"{overruns[1].category} is the second at "
+                f"{overruns[1].variance:+.1f} {unit}"
+            )
+    contingency = budget.contingency
+    if contingency is not None:
+        considerations.append(
+            f"{_fixed(contingency.forecast)} {unit} of contingency remains against "
+            f"{_fixed(contingency.budget)} {unit} approved"
+        )
+    all_ids = {ss.id for ss in programme.sub_streams}
+    considerations += [raid_line(i) for i in raid_for(programme, all_ids, 1)]
+
+    return FinancialSummarySpec(
+        title=title,
+        subtitle=(
+            f"Programme cost | Week {week} | Forecast at completion against approved budget, "
+            f"{unit}"
+        ),
+        unit=unit,
+        rows=rows,
+        total=total,
+        gauges=gauges,
+        considerations=considerations[:4],
+        notes=_note(
+            "Lead with the total: the programme forecasts on budget. Then the gauges, "
+            "which are the reason that is not the whole story.",
+            (
+                f"Contingency is {drawn:.0%} drawn at {elapsed:.0%} elapsed, funding "
+                f"overruns on {', '.join(line.category.lower() for line in overruns[:2])}."
+                if overruns
+                else "No line is forecasting an overrun."
+            ),
+            "The question to expect is what happens if the gate slips: the remaining "
+            "contingency is the answer, and it is on the slide.",
+        ),
+    )
+
+
 def kpi_scorecard(programme: Programme, week: str) -> KpiScorecardSpec | None:
     """Benefit measures against the delivery that is supposed to produce them."""
     if not programme.benefits:
@@ -773,23 +894,28 @@ def build_deck_spec(programme: Programme, week: str | None = None) -> DeckSpec:
         )
     today = min(max(week_end(week), programme.start), programme.end)
 
+    # Delivery first, then value and cost, then how it is being run. A CFO
+    # audience reads the case and the budget as one section, not as two slides
+    # buried behind the status.
     body: list = [
         divider(1, "Where we stand", "Work package status and the open RAID position"),
         status_overview(programme, week),
         raid_table(programme, week),
-        kpi_scorecard(programme, week),
+        divider(2, "The case and the cost", "What the programme is worth and what it is spending"),
         benefits_bridge(programme, week),
-        divider(2, "Delivery plan", "The roadmap and the gates it has to clear"),
+        kpi_scorecard(programme, week),
+        financial_summary(programme, week),
+        divider(3, "Delivery plan", "The roadmap and the gates it has to clear"),
         roadmap(programme, week, today),
         criteria_columns(programme, week),
-        divider(3, "Work packages", "Charter and current position for each work package"),
+        divider(4, "Work packages", "Charter and current position for each work package"),
     ]
     body = [slide for slide in body if slide is not None]
     body += [c for c in (charter(programme, week, wp) for wp in programme.work_packages) if c]
     body += [
-        divider(4, "Governance", "Who decides, who delivers, and who has to be consulted"),
+        divider(5, "Governance", "Who decides, who delivers, and who has to be consulted"),
         governance(programme),
-        divider(5, "Appendix", "The full RAID log, in support of the position above"),
+        divider(6, "Appendix", "The full RAID log, in support of the position above"),
     ]
     body += raid_appendix(programme, week)
 

@@ -2,9 +2,9 @@
 
 **Consulting-grade PowerPoint status decks, generated from structured programme data.**
 
-Feed it a transformation programme — work packages, stage gates, a RAID log, benefit
-measures, weekly sub-stream reports — and it produces an eighteen-slide deck that a
-consultant could take into a steering committee without apologising for it. Every slide
+Feed it a transformation programme — work packages, stage gates, a RAID log, a benefit
+case, a budget, weekly sub-stream reports — and it produces a twenty-one-slide deck that
+a consultant could take into a steering committee without apologising for it. Every slide
 is built from native PowerPoint shapes: the text is selectable, the roadmap bars are
 draggable, the RAID log is a real table you can sort. Nothing is an image. Every content
 slide carries speaker notes derived from the same figures. It runs end to end with no
@@ -29,10 +29,10 @@ no network, no configuration.
 
 ```
 Wrote deckpilot/data/programme.json - 12 sub-streams, 18 RAID items
-Wrote examples/deck.pptx - 18 slides (1 x agenda, 1 x criteria_columns,
-  1 x exec_summary, 1 x governance_chart, 1 x kpi_scorecard, 3 x raid_table,
-  1 x roadmap_gantt, 5 x section_divider, 1 x status_overview,
-  3 x workstream_charter)
+Wrote examples/deck.pptx - 21 slides (1 x agenda, 1 x benefits_bridge,
+  1 x criteria_columns, 1 x exec_summary, 1 x financial_summary,
+  1 x governance_chart, 1 x kpi_scorecard, 3 x raid_table, 1 x roadmap_gantt,
+  6 x section_divider, 1 x status_overview, 3 x workstream_charter)
 Geometry check: clean.
 ```
 
@@ -48,7 +48,7 @@ deckpilot pdf deck.pptx
 ```
 
 `render-one` builds a single layout from its sample spec, which is how you work on one
-without rebuilding seventeen other slides first. `check` runs the geometry linter over a
+without rebuilding twenty other slides first. `check` runs the geometry linter over a
 deck that already exists, and `layouts` lists what this build can render.
 
 ---
@@ -99,6 +99,8 @@ let a language model touch the deck at all.
 | **Governance chart** — three tiers joined by native connectors, each work package split into core and contributing teams | ![](examples/screenshots/governance-chart.png) |
 | **Criteria columns** — a question per column and the characteristics that answer it; also covers WHY / WHAT / HOW framings | ![](examples/screenshots/criteria-columns.png) |
 | **Executive summary** — rated verdict, the messages behind it, the decisions being asked for | ![](examples/screenshots/exec-summary.png) |
+| **Benefits bridge** — the cost case as a waterfall, baseline to target, one column per lever, with a truncated axis the slide admits to | ![](examples/screenshots/benefits-bridge.png) |
+| **Financial summary** — budget against forecast at completion, variance as a diverging bar, and contingency drawn against time elapsed | ![](examples/screenshots/financial-summary.png) |
 | **KPI scorecard** — benefit measures from baseline to target, each bar marked at the delivery progress of the stream producing it | ![](examples/screenshots/kpi-scorecard.png) |
 | **Agenda** — sections and the page each one starts on, resolved after the appendix has been paginated | ![](examples/screenshots/agenda.png) |
 | **RAID appendix** — the full log split across as many slides as it needs, with split groups re-announced | ![](examples/screenshots/raid-appendix.png) |
@@ -154,6 +156,13 @@ carries a drop shadow. An empty `<a:effectLst/>` suppresses it in PowerPoint but
 every renderer, so the whole style block is stripped — a deck whose shapes grow shadows
 depending on who opens it is not a deck you control.
 
+**An exhibit can be accurate and still dishonest.** A cost bridge drawn from zero turns
+every lever into a sliver, so the axis is truncated — and the slide says so, because a
+truncated axis nobody declared is a chart that misleads on purpose. A step too small to
+see is still drawn at a minimum height: dropping it would leave an unexplained gap in the
+bridge, and the label states the real number either way. The model refuses a case that
+does not reconcile, so a bridge whose levers do not add up to its target will not load.
+
 **A number needs something to be measured against.** A benefit 29% of the way to target is
 good or bad depending on how much of the work that produces it has been done, so each bar
 on the scorecard carries a marker at the delivery progress of its own sub-stream. Measuring
@@ -193,7 +202,7 @@ Two passes, because they catch different faults.
 ```bash
 python scripts/qa.py examples/deck.pptx        # lint the geometry, then render every slide
 deckpilot check examples/deck.pptx             # the geometry half, on its own
-pytest                                          # 253 tests
+pytest                                          # 316 tests
 ruff check .
 ```
 

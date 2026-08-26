@@ -189,6 +189,7 @@ SAMPLES: dict[str, object] = {
     "criteria_columns": _from_programme(fallback.criteria_columns),
     "kpi_scorecard": _from_programme(fallback.kpi_scorecard),
     "benefits_bridge": _from_programme(fallback.benefits_bridge),
+    "financial_summary": _from_programme(fallback.financial_summary),
     "agenda": next(
         s for s in fallback.build_deck_spec(build_programme()).slides if s.layout == "agenda"
     ),

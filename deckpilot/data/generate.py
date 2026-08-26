@@ -21,6 +21,7 @@ from deckpilot.data.models import (
     BenefitLever,
     BenefitMeasure,
     Confidence,
+    CostLine,
     GateStatus,
     Governance,
     Milestone,
@@ -29,6 +30,7 @@ from deckpilot.data.models import (
     Phase,
     PhaseStatus,
     Programme,
+    ProgrammeBudget,
     RaidItem,
     RaidType,
     Severity,
@@ -685,6 +687,22 @@ BENEFIT_CASE = {
     "target": 33.5,
 }
 
+# Programme budget. The story is in the contingency: the overruns on advisory and
+# transition are real, they are funded, and the funding is running down faster
+# than the calendar. A budget that lands exactly on plan with every line on plan
+# is a budget nobody is managing.
+#
+# id, category, budget, actual to date, forecast, owner, is contingency
+BUDGET_UNIT = "EUR m"
+BUDGET_LINES = [
+    ("c1", "External advisory", 6.8, 4.3, 7.5, "Felix Aumann", False),
+    ("c2", "Technology and licences", 5.2, 2.9, 5.1, "Rahul Menon", False),
+    ("c3", "Internal programme team", 4.6, 2.7, 4.6, "Grace Adeyinka", False),
+    ("c4", "Transition, travel and training", 2.4, 1.2, 2.9, "Yusuf Demirci", False),
+    ("c5", "Site fit-out", 3.1, 1.6, 3.2, "Priya Raghunathan", False),
+    ("c6", "Contingency", 2.0, 0.0, 0.8, "Nadia Bergstrom", True),
+]
+
 STEERING_COMMITTEE = [
     ("Helena Marchand", "Chief Financial Officer", "Northwind Group"),
     ("Arun Sethi", "Group Financial Controller", "Northwind Group"),
@@ -891,6 +909,22 @@ def build_programme(as_of: date = AS_OF, history_weeks: int = HISTORY_WEEKS) -> 
         ],
     )
 
+    budget = ProgrammeBudget(
+        unit=BUDGET_UNIT,
+        lines=[
+            CostLine(
+                id=cid,
+                category=category,
+                budget=budgeted,
+                actual_to_date=actual,
+                forecast=forecast,
+                owner=owner,
+                is_contingency=contingency,
+            )
+            for cid, category, budgeted, actual, forecast, owner, contingency in BUDGET_LINES
+        ],
+    )
+
     return Programme(
         name="Project Meridian",
         client="Northwind GBS",
@@ -904,6 +938,7 @@ def build_programme(as_of: date = AS_OF, history_weeks: int = HISTORY_WEEKS) -> 
         weekly_status=_build_weekly_status(as_of, history_weeks),
         benefits=benefits,
         benefit_case=benefit_case,
+        budget=budget,
         governance=governance,
     )
 

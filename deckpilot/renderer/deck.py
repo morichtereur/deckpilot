@@ -17,6 +17,7 @@ from deckpilot.renderer import (
     benefits_bridge,
     criteria_columns,
     exec_summary,
+    financial_summary,
     governance_chart,
     kpi_scorecard,
     raid_table,
@@ -44,6 +45,7 @@ RENDERERS = {
     "kpi_scorecard": kpi_scorecard.render,
     "agenda": agenda.render,
     "benefits_bridge": benefits_bridge.render,
+    "financial_summary": financial_summary.render,
 }
 
 

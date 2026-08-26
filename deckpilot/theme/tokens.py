@@ -318,6 +318,18 @@ KPI_LEGEND_GAP = inches(0.08)
 KPI_LEGEND_H = inches(0.20)
 KPI_BEHIND_TOLERANCE = 0.20  # attainment points behind delivery before a row goes red
 
+# Financial summary metrics
+FIN_HEADER_H = inches(0.28)
+FIN_ROW_MAX_H = inches(0.52)
+FIN_PAD = inches(0.07)
+FIN_BAR_H = inches(0.15)
+FIN_ZERO_LINE_PT = 0.75
+FIN_MIN_BAR_W = inches(0.02)
+FIN_GAUGE_H = inches(0.16)
+FIN_GAUGE_GAP = inches(0.12)
+FIN_GAUGE_LABEL_W = inches(1.75)
+FIN_GAUGE_VALUE_W = inches(0.45)
+
 # Benefits bridge (waterfall) metrics
 BRIDGE_VALUE_BAND_H = inches(0.30)  # room above the tallest column for its label
 BRIDGE_LABEL_BAND_H = inches(0.78)  # category names beneath the axis

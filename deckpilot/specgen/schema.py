@@ -281,6 +281,35 @@ class BenefitsBridgeSpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 12. Financial summary
+# --------------------------------------------------------------------------
+
+
+class CostRow(Spec):
+    category: str = Field(min_length=1, max_length=60)
+    budget: str = Field(min_length=1, max_length=12)
+    actual: str = Field(min_length=1, max_length=12)
+    forecast: str = Field(min_length=1, max_length=12)
+    variance: str = Field(min_length=1, max_length=12)
+    variance_value: float  # signed, in the summary's unit; positive is an overrun
+    emphasis: bool = False  # the contingency line, and the total
+
+
+class Gauge(Spec):
+    label: str = Field(min_length=1, max_length=40)
+    fraction: float = Field(ge=0.0, le=1.0)
+    value: str = Field(min_length=1, max_length=12)
+
+
+class FinancialSummarySpec(SlideBase):
+    layout: Literal["financial_summary"] = "financial_summary"
+    unit: str = Field(min_length=1, max_length=12)
+    rows: list[CostRow] = Field(min_length=2, max_length=10)
+    total: CostRow
+    gauges: list[Gauge] = Field(default_factory=list, max_length=3)
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
@@ -295,7 +324,8 @@ AnySlideSpec = Annotated[
     | ExecSummarySpec
     | KpiScorecardSpec
     | AgendaSpec
-    | BenefitsBridgeSpec,
+    | BenefitsBridgeSpec
+    | FinancialSummarySpec,
     Field(discriminator="layout"),
 ]
 

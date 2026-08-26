@@ -317,6 +317,64 @@ class BenefitCase(Base):
         return self.baseline - self.target
 
 
+class CostLine(Base):
+    """One line of the programme budget."""
+
+    id: str
+    category: str
+    budget: float
+    actual_to_date: float
+    forecast: float
+    owner: str
+    is_contingency: bool = False
+
+    @property
+    def variance(self) -> float:
+        """Forecast against budget. Positive is an overrun."""
+        return self.forecast - self.budget
+
+    @property
+    def drawn(self) -> float:
+        """Share of the line consumed by the forecast, 0.0 upward."""
+        return self.forecast / self.budget if self.budget else 0.0
+
+
+class ProgrammeBudget(Base):
+    unit: str
+    lines: list[CostLine] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def _one_contingency_line(self) -> Self:
+        contingency = [line for line in self.lines if line.is_contingency]
+        if len(contingency) > 1:
+            raise ValueError("a budget may hold at most one contingency line")
+        return self
+
+    @property
+    def contingency(self) -> CostLine | None:
+        return next((line for line in self.lines if line.is_contingency), None)
+
+    @property
+    def delivery_lines(self) -> list[CostLine]:
+        """Everything that is not contingency."""
+        return [line for line in self.lines if not line.is_contingency]
+
+    def total(self, field: str) -> float:
+        return sum(getattr(line, field) for line in self.lines)
+
+    @property
+    def variance(self) -> float:
+        return self.total("forecast") - self.total("budget")
+
+    @property
+    def contingency_drawn(self) -> float:
+        """How much of the contingency the overruns have consumed, 0.0 to 1.0."""
+        line = self.contingency
+        if line is None or not line.budget:
+            return 0.0
+        return max(0.0, min(1.0, (line.budget - line.forecast) / line.budget))
+
+
 class WeeklyStatus(Base):
     """One sub-stream's report for one ISO week."""
 
@@ -356,6 +414,7 @@ class Programme(Base):
     weekly_status: list[WeeklyStatus] = Field(min_length=1)
     benefits: list[BenefitMeasure] = Field(default_factory=list)
     benefit_case: BenefitCase | None = None
+    budget: ProgrammeBudget | None = None
     governance: Governance
 
     # -- lookups ----------------------------------------------------------
