@@ -64,7 +64,7 @@ def _bullet(text: str) -> str:
     return text.rstrip().rstrip(".")
 
 
-def _sentence(item: RaidItem) -> str:
+def raid_line(item: RaidItem) -> str:
     """A RAID item as one line of annotation, not two."""
     return f"{item.title} ({item.severity.value}, {item.owner}, due {item.due:%d %b})"
 
@@ -170,7 +170,7 @@ def charter(programme: Programme, week: str, wp: WorkPackage) -> WorkstreamChart
         title=charter_title(programme, week, wp),
         subtitle=f"Work package {wp.number} - {wp.name} | Charter and current position",
         columns=columns,
-        considerations=[_sentence(i) for i in raid_for(programme, ids, 4)],
+        considerations=[raid_line(i) for i in raid_for(programme, ids, 4)],
     )
 
 
@@ -203,7 +203,7 @@ def roadmap(programme: Programme, week: str, today: date) -> RoadmapGanttSpec:
         window_end=programme.end,
         today=today,
         rows=rows,
-        considerations=[_sentence(i) for i in raid_for(programme, all_ids, 4)],
+        considerations=[raid_line(i) for i in raid_for(programme, all_ids, 4)],
     )
 
 
