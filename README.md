@@ -208,6 +208,28 @@ teams or numbers are real.
 
 ---
 
+## Troubleshooting
+
+**`ModuleNotFoundError: No module named 'deckpilot'` right after `pip install -e .`**
+— on macOS, check whether the install's path file has picked up the hidden flag:
+
+```bash
+ls -lO .venv/lib/python3.*/site-packages/*.pth
+```
+
+`site` silently skips a `.pth` file marked `hidden`, so the editable install is never
+put on the path and nothing reports an error. Clear it:
+
+```bash
+chflags nohidden .venv/lib/python3.*/site-packages/*.pth
+```
+
+**`scripts/qa.py` cannot find LibreOffice** — it looks in `/Applications/LibreOffice.app`
+and then on `PATH`. Pass `--no-images` to run the geometry check alone; that half needs
+nothing but Python.
+
+---
+
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
