@@ -204,7 +204,14 @@ named, so it can tell a title and subtitle set deliberately tight from two boxes
 collided (`bleed:` crosses the margin on purpose, `marker:` sits on top of something on
 purpose, `surface:` is a background band other content comes right up to).
 
-The **visual pass** finds what only eyes catch. `scripts/qa.py` converts the deck to PDF
+The **visual pass** finds what only eyes catch — including one class of fault the linter
+cannot see at all. A table's *declared* height can be perfectly within the content area
+while the *rendered* table runs into the footer, because a row height is a floor and the
+renderer grows anything under-declared. A cell's line box in a table turned out to be about
+1.48x the font size against the 1.22x an ordinary text frame uses; nothing but a rendered
+page shows that.
+
+The visual pass `scripts/qa.py` converts the deck to PDF
 with LibreOffice and rasterises each page with CoreGraphics — headless, about four seconds
 for a deck, with no GUI application involved. It needs LibreOffice on the path and, on
 macOS, `pip install -e '.[qa]'` for the rasteriser.

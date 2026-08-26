@@ -82,34 +82,42 @@ CELL_MARGIN = T.inches(0.03)
 CANDIDATE_SIZES = [T.FS_DENSE, T.FS_DENSE - 0.5, T.FS_MICRO, T.FS_MICRO - 0.5, T.FS_MICRO - 1]
 PREFERRED_SIZE = CANDIDATE_SIZES[0]
 BALANCE_TOLERANCE = T.inches(0.02)
-MAX_ROW_STRETCH = 1.55  # how far a row may open out beyond the height its text needs
+WIDTH_SAFETY = 0.96  # measure against slightly less width than the column really has
+# A declared row height is a floor, not a ceiling: over-declare and the row is
+# simply as tall as asked, under-declare and the renderer grows it and pushes the
+# whole table down the slide. So both figures below err high on purpose, and the
+# rows are never opened out to fill the leftover - an earlier version did that and
+# the table walked into the footer, because filling to the last EMU leaves nothing
+# for the gap between a calibrated figure and a real renderer.
+ROW_OVERHEAD = T.inches(0.03)
+# A table cell's line box is markedly taller than a text box's - measured at
+# roughly 1.45x the font size against the 1.22x that text_metrics assumes for
+# ordinary frames. Using the text-box figure here under-declares every row, and
+# because a declared row height is a floor rather than a ceiling, the renderer
+# quietly grows each one and walks the table off the bottom of the slide.
+TABLE_LINE_HEIGHT = 1.48
 
 
 def _row_lines(row: RaidRow, widths: dict[str, int], size: float) -> int:
-    """How many lines the tallest cell in this row needs."""
+    """How many lines the tallest cell in this row needs.
+
+    Measured against slightly less than the real column width. Our Calibri
+    metrics are close to a renderer's but not identical, and a table row height
+    is a minimum: underestimate one cell by a single word and PowerPoint grows
+    that row, which pushes every row below it down and the table off the slide.
+    Erring wide costs a little whitespace; erring narrow costs the slide.
+    """
+    def usable(key: str) -> float:
+        return (widths[key] - 2 * T.RAID_CELL_PAD) * WIDTH_SAFETY / T.EMU_PER_PT
+
     return max(
-        tm.line_count(text, (widths[key] - 2 * T.RAID_CELL_PAD) / T.EMU_PER_PT, size)
+        tm.line_count(text, usable(key), size)
         for key, text in (
             ("title", row.title),
             ("mitigation", row.mitigation),
             ("owner", row.owner),
         )
     )
-
-
-def _spread(heights: list[int], available: int) -> list[int]:
-    """Open the rows out into whatever height is left over.
-
-    A table that stops two thirds of the way down its slide looks like a table
-    that was cut off. Spreading the surplus across the rows fills the same slide
-    with the same content and reads as a deliberate rhythm - capped, because past
-    a point a row stops looking generous and starts looking empty.
-    """
-    surplus = available - sum(heights)
-    if surplus <= 0 or not heights:
-        return heights
-    per_row = surplus // len(heights)
-    return [min(h + per_row, int(h * MAX_ROW_STRETCH)) for h in heights]
 
 
 def _plan(rows: list[RaidRow], widths: dict[str, int], groups: int,
@@ -124,13 +132,16 @@ def _plan(rows: list[RaidRow], widths: dict[str, int], groups: int,
     fixed = T.RAID_HEADER_H + groups * T.RAID_GROUP_H
     heights: list[int] = []
     for size in CANDIDATE_SIZES:
-        line_h = size * tm.LINE_HEIGHT_FACTOR * T.EMU_PER_PT
+        line_h = size * TABLE_LINE_HEIGHT * T.EMU_PER_PT
         heights = [
-            max(T.RAID_ROW_MIN_H, int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN)
+            max(
+                T.RAID_ROW_MIN_H,
+                int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN + ROW_OVERHEAD,
+            )
             for row in rows
         ]
         if fixed + sum(heights) <= available:
-            return size, _spread(heights, available - fixed)
+            return size, heights
     log.warning(
         "raid table: %d rows do not fit %.2f in even at %.1fpt",
         len(rows), available / T.EMU_PER_INCH, CANDIDATE_SIZES[-1],
@@ -160,11 +171,12 @@ def _break_into_pages(
     its own rather than being deferred forever.
     """
     cap = available if available_cap is None else available_cap
-    line_h = size * tm.LINE_HEIGHT_FACTOR * T.EMU_PER_PT
+    line_h = size * TABLE_LINE_HEIGHT * T.EMU_PER_PT
 
     def height(row: RaidRow) -> int:
         return max(
-            T.RAID_ROW_MIN_H, int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN
+            T.RAID_ROW_MIN_H,
+            int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN + ROW_OVERHEAD,
         )
 
     pages: list[Page] = []

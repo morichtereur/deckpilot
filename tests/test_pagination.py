@@ -11,6 +11,7 @@ import pytest
 
 from deckpilot.data.generate import build_programme
 from deckpilot.renderer import raid_table
+from deckpilot.renderer import text_metrics as tm
 from deckpilot.renderer.base import new_deck
 from deckpilot.renderer.qa import check_slide
 from deckpilot.specgen import fallback
@@ -165,22 +166,16 @@ def test_every_appendix_page_is_clean_and_above_the_footer():
         assert frame.top + frame.height <= T.footer_top()
 
 
-def test_rows_open_out_but_not_without_limit(rows):
-    """Surplus height is spread across rows, capped so none looks abandoned."""
+def test_declared_heights_err_high_rather_than_low(rows):
+    """A row height is a floor: the renderer grows anything under-declared."""
     widths = raid_table.column_widths(WIDTH)
-    natural = [
-        max(
-            T.RAID_ROW_MIN_H,
-            int(
-                raid_table._row_lines(row, widths, raid_table.PREFERRED_SIZE)
-                * raid_table.PREFERRED_SIZE
-                * 1.22
-                * T.EMU_PER_PT
-            ),
+    for row in rows:
+        lines = raid_table._row_lines(row, widths, raid_table.PREFERRED_SIZE)
+        bare = tm.line_count(
+            row.mitigation,
+            (widths["mitigation"] - 2 * T.RAID_CELL_PAD) / T.EMU_PER_PT,
+            raid_table.PREFERRED_SIZE,
         )
-        for row in rows[:4]
-    ]
-    spread = raid_table._spread(list(natural), sum(natural) * 4)
-    for before, after in zip(natural, spread, strict=True):
-        assert after >= before
-        assert after <= before * raid_table.MAX_ROW_STRETCH + 1
+        assert lines >= bare, row.id
+    assert raid_table.TABLE_LINE_HEIGHT > tm.LINE_HEIGHT_FACTOR
+    assert raid_table.WIDTH_SAFETY < 1.0
