@@ -121,12 +121,21 @@ def test_the_schema_is_self_contained():
 # -- the happy path -------------------------------------------------------
 
 
+def first_content_index(spec: DeckSpec) -> int:
+    return next(i for i, s in enumerate(spec.slides) if s.layout != "section_divider")
+
+
+def first_divider_index(spec: DeckSpec) -> int:
+    return next(i for i, s in enumerate(spec.slides) if s.layout == "section_divider")
+
+
 def test_a_valid_narrative_is_applied(programme, baseline):
     client = FakeClient(good_payload(baseline, programme))
     spec = llm.build_deck_spec_with_llm(programme, client=client)
 
     assert len(client.calls) == 1
-    assert spec.slides[0] == baseline.slides[0]  # the divider is untouched
+    divider = first_divider_index(baseline)
+    assert spec.slides[divider] == baseline.slides[divider]  # dividers are untouched
     edited = [s for s in spec.slides if s.layout != "section_divider"]
     assert all(s.title.startswith("Rewritten action title") for s in edited)
     assert all(s.subtitle == "Rewritten subtitle" for s in edited)
@@ -201,17 +210,27 @@ def test_the_retry_carries_the_validation_error(programme, baseline):
     assert retry_messages[-1]["role"] == "user"
     assert "did not validate" in retry_messages[-1]["content"]
     # And the corrected second attempt is the one that lands.
-    assert spec.slides[1].title.startswith("Rewritten action title")
+    assert spec.slides[first_content_index(spec)].title.startswith("Rewritten action title")
 
 
 def test_a_schema_violation_is_retried(programme, baseline):
+    index = first_content_index(baseline)
     too_long = json.dumps(
-        {"slides": [{"slide_id": "slide-2", "title": "x" * 400, "subtitle": "", "raid_ids": []}]}
+        {
+            "slides": [
+                {
+                    "slide_id": llm.slide_id(index),
+                    "title": "x" * 400,
+                    "subtitle": "",
+                    "raid_ids": [],
+                }
+            ]
+        }
     )
     client = FakeClient(too_long, good_payload(baseline, programme))
     spec = llm.build_deck_spec_with_llm(programme, client=client)
     assert len(client.calls) == 2
-    assert spec.slides[1].title.startswith("Rewritten action title")
+    assert spec.slides[index].title.startswith("Rewritten action title")
 
 
 def test_an_unknown_slide_id_is_ignored(programme, baseline):

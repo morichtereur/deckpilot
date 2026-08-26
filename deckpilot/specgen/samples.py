@@ -9,6 +9,7 @@ from __future__ import annotations
 from datetime import date
 
 from deckpilot.data.generate import build_programme
+from deckpilot.specgen import fallback
 from deckpilot.specgen.schema import (
     CharterColumn,
     GanttBar,
@@ -96,6 +97,16 @@ def _governance_sample() -> GovernanceChartSpec:
     )
 
 
+def _from_programme(builder) -> object:
+    """v2 layouts take their sample straight from the deterministic builder.
+
+    Hand-writing a second copy of a status card or a RAID row only creates
+    something that drifts out of step with the data the moment either changes.
+    """
+    programme = build_programme()
+    return builder(programme, programme.weeks()[-1])
+
+
 SAMPLES: dict[str, object] = {
     "section_divider": SectionDividerSpec(
         number="2",
@@ -172,4 +183,8 @@ SAMPLES: dict[str, object] = {
     ),
     "roadmap_gantt": _roadmap_sample(),
     "governance_chart": _governance_sample(),
+    "exec_summary": _from_programme(fallback.exec_summary),
+    "status_overview": _from_programme(fallback.status_overview),
+    "raid_table": _from_programme(fallback.raid_table),
+    "criteria_columns": _from_programme(fallback.criteria_columns),
 }

@@ -216,6 +216,31 @@ GOV_SECTION_GAP = inches(0.07)
 GOV_LABEL_H = inches(0.17)
 GOV_CONNECTOR_PT = 1.0
 
+# RAID table metrics
+RAID_HEADER_H = inches(0.26)
+RAID_GROUP_H = inches(0.22)
+RAID_ROW_MIN_H = inches(0.24)
+RAID_CELL_PAD = inches(0.06)
+
+# Status overview metrics
+STATUS_CARD_HEAD_H = inches(0.34)
+STATUS_BAR_H = inches(0.14)
+STATUS_BAR_LABEL_W = inches(0.46)
+STATUS_PAD = inches(0.12)
+STATUS_SECTION_GAP = inches(0.10)
+
+# Criteria columns metrics
+CRITERIA_HEAD_H = inches(0.62)
+CRITERIA_LABEL_H = inches(0.20)
+CRITERIA_PAD = inches(0.10)
+
+# Executive summary metrics
+EXEC_VERDICT_H = inches(1.05)
+EXEC_RAG_W = inches(1.30)
+EXEC_MESSAGE_HEAD_H = inches(0.26)
+EXEC_PAD = inches(0.12)
+EXEC_GAP = inches(0.14)
+
 
 # --------------------------------------------------------------------------
 # Grid helpers

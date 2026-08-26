@@ -121,11 +121,108 @@ class GovernanceChartSpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 5. RAID table
+# --------------------------------------------------------------------------
+
+Severity = Literal["H", "M", "L"]
+RaidKind = Literal["risk", "assumption", "issue", "dependency"]
+
+
+class RaidRow(Spec):
+    id: str = Field(min_length=1, max_length=8)
+    kind: RaidKind
+    severity: Severity
+    title: str = Field(min_length=1, max_length=120)
+    owner: str = Field(min_length=1, max_length=40)
+    due: str = Field(min_length=1, max_length=16)
+    mitigation: str = Field(min_length=1, max_length=200)
+
+
+class RaidTableSpec(SlideBase):
+    layout: Literal["raid_table"] = "raid_table"
+    rows: list[RaidRow] = Field(min_length=1, max_length=20)
+    group_labels: dict[str, str] = Field(
+        default_factory=lambda: {
+            "risk": "Risks",
+            "issue": "Issues",
+            "dependency": "Dependencies",
+            "assumption": "Assumptions",
+        }
+    )
+
+
+# --------------------------------------------------------------------------
+# 6. Status overview
+# --------------------------------------------------------------------------
+
+RagValue = Literal["green", "amber", "red"]
+
+
+class StatusCard(Spec):
+    number: str = Field(min_length=1, max_length=3)
+    name: str = Field(min_length=1, max_length=60)
+    rag: RagValue
+    progress_pct: int = Field(ge=0, le=100)
+    activities: list[str] = Field(min_length=1, max_length=3)
+    next_milestone: str = Field(default="", max_length=90)
+
+
+class StatusOverviewSpec(SlideBase):
+    layout: Literal["status_overview"] = "status_overview"
+    cards: list[StatusCard] = Field(min_length=2, max_length=6)
+
+
+# --------------------------------------------------------------------------
+# 7. Criteria columns
+# --------------------------------------------------------------------------
+
+
+class CriteriaColumn(Spec):
+    question: str = Field(min_length=1, max_length=80)
+    caption: str | None = Field(default=None, max_length=60)
+    characteristics: list[str] = Field(min_length=1, max_length=6)
+    state: Literal["passed", "upcoming", "at-risk", "neutral"] = "neutral"
+
+
+class CriteriaColumnsSpec(SlideBase):
+    layout: Literal["criteria_columns"] = "criteria_columns"
+    columns: list[CriteriaColumn] = Field(min_length=2, max_length=5)
+    characteristics_label: str = "Characteristics"
+
+
+# --------------------------------------------------------------------------
+# 8. Executive summary
+# --------------------------------------------------------------------------
+
+
+class KeyMessage(Spec):
+    heading: str = Field(min_length=1, max_length=70)
+    detail: str = Field(min_length=1, max_length=260)
+    rag: RagValue = "green"
+
+
+class ExecSummarySpec(SlideBase):
+    layout: Literal["exec_summary"] = "exec_summary"
+    overall_rag: RagValue
+    verdict: str = Field(min_length=1, max_length=180)
+    messages: list[KeyMessage] = Field(min_length=2, max_length=4)
+    decisions: list[str] = Field(default_factory=list, max_length=4)
+    decisions_label: str = "Decisions needed"
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
 AnySlideSpec = Annotated[
-    SectionDividerSpec | WorkstreamCharterSpec | RoadmapGanttSpec | GovernanceChartSpec,
+    SectionDividerSpec
+    | WorkstreamCharterSpec
+    | RoadmapGanttSpec
+    | GovernanceChartSpec
+    | RaidTableSpec
+    | StatusOverviewSpec
+    | CriteriaColumnsSpec
+    | ExecSummarySpec,
     Field(discriminator="layout"),
 ]
 

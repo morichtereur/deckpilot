@@ -49,11 +49,22 @@ def test_the_build_is_deterministic(programme):
     assert a == b
 
 
-def test_the_deck_opens_and_closes_its_sections(spec):
+def test_the_deck_leads_with_the_answer(spec):
+    """A status deck opens on the verdict, not on a divider."""
     layouts = [s.layout for s in spec.slides]
-    assert layouts[0] == "section_divider"
-    assert layouts.count("section_divider") == 3
-    assert "roadmap_gantt" in layouts and "governance_chart" in layouts
+    assert layouts[0] == "exec_summary"
+    assert layouts.count("section_divider") >= 3
+
+
+def test_the_deck_covers_every_layout(spec):
+    layouts = {s.layout for s in spec.slides}
+    from deckpilot.renderer.deck import RENDERERS
+
+    assert layouts == set(RENDERERS), sorted(set(RENDERERS) - layouts)
+
+
+def test_the_deck_is_long_enough_to_present(spec):
+    assert len(spec.slides) >= 12
 
 
 def test_section_dividers_are_numbered_in_order(spec):

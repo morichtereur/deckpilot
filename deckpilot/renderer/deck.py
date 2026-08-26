@@ -13,9 +13,13 @@ from pathlib import Path
 from pptx.presentation import Presentation as PresentationType
 
 from deckpilot.renderer import (
+    criteria_columns,
+    exec_summary,
     governance_chart,
+    raid_table,
     roadmap_gantt,
     section_divider,
+    status_overview,
     workstream_charter,
 )
 from deckpilot.renderer.base import new_deck
@@ -30,6 +34,10 @@ RENDERERS = {
     "workstream_charter": workstream_charter.render,
     "roadmap_gantt": roadmap_gantt.render,
     "governance_chart": governance_chart.render,
+    "raid_table": raid_table.render,
+    "status_overview": status_overview.render,
+    "criteria_columns": criteria_columns.render,
+    "exec_summary": exec_summary.render,
 }
 
 

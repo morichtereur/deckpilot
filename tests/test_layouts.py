@@ -286,3 +286,123 @@ def test_governance_comments_panel_is_labelled_comments():
     slide = governance_chart.render(prs, SAMPLES["governance_chart"], page=4)
     heading = next(s for s in slide.shapes if s.name == "panel:heading")
     assert heading.text_frame.paragraphs[0].runs[0].text == "Comments"
+
+
+# -- v2 layouts ------------------------------------------------------------
+
+
+V2_LAYOUTS = ["raid_table", "status_overview", "criteria_columns", "exec_summary"]
+
+
+def _render_sample(layout: str, page: int = 5):
+    from deckpilot.renderer.deck import RENDERERS
+
+    prs = new_deck()
+    return RENDERERS[layout](prs, SAMPLES[layout], page)
+
+
+@pytest.mark.parametrize("layout", V2_LAYOUTS)
+def test_v2_layouts_are_geometrically_clean(layout):
+    assert errors(_render_sample(layout), 5) == []
+
+
+@pytest.mark.parametrize("layout", V2_LAYOUTS)
+def test_v2_layouts_stay_above_the_footer(layout):
+    """The RAID table in particular: a pptx row height is a minimum, not a cap."""
+    slide = _render_sample(layout)
+    for shape in slide.shapes:
+        if shape.name.startswith("footer:"):
+            continue
+        assert shape.top + shape.height <= T.footer_top(), shape.name
+
+
+def test_the_raid_table_is_a_native_table_grouped_by_type():
+    slide = _render_sample("raid_table")
+    frame = next(s for s in slide.shapes if s.name == "raid:table")
+    assert frame.has_table
+    table = frame.table
+
+    spec = SAMPLES["raid_table"]
+    kinds = {row.kind for row in spec.rows}
+    expected_rows = 1 + len(kinds) + len(spec.rows)
+    assert len(table.rows) == expected_rows
+
+    texts = [table.cell(i, 1).text for i in range(len(table.rows))]
+    for kind in kinds:
+        label = spec.group_labels[kind]
+        assert any(t.startswith(label) for t in texts), label
+
+
+def test_raid_severity_cells_are_coloured_by_severity():
+    slide = _render_sample("raid_table")
+    table = next(s for s in slide.shapes if s.name == "raid:table").table
+    seen = {}
+    for i in range(1, len(table.rows)):
+        cell = table.cell(i, 0)
+        if cell.text in ("H", "M", "L"):
+            seen[cell.text] = cell.fill.fore_color.rgb
+    assert seen
+    for severity, colour in seen.items():
+        assert colour == T.SEVERITY_COLORS[severity]
+
+
+def test_the_raid_table_fits_the_content_area():
+    slide = _render_sample("raid_table")
+    frame = next(s for s in slide.shapes if s.name == "raid:table")
+    declared = sum(row.height for row in frame.table.rows)
+    assert declared == frame.height
+    assert frame.top + frame.height <= T.content_bottom() + T.inches(0.01)
+
+
+def test_status_cards_carry_a_progress_bar_that_matches_the_number():
+    slide = _render_sample("status_overview")
+    spec = SAMPLES["status_overview"]
+    for i, card in enumerate(spec.cards):
+        track = next(s for s in slide.shapes if s.name == f"card{i}:track")
+        if card.progress_pct == 0:
+            assert not any(s.name == f"marker:card{i}fill" for s in slide.shapes)
+            continue
+        fill = next(s for s in slide.shapes if s.name == f"marker:card{i}fill")
+        assert fill.left == track.left
+        assert fill.width == pytest.approx(track.width * card.progress_pct / 100, abs=2)
+        assert fill.width <= track.width
+
+
+def test_status_cards_show_their_rag_chip():
+    slide = _render_sample("status_overview")
+    for i, card in enumerate(SAMPLES["status_overview"].cards):
+        chip = next(s for s in slide.shapes if s.name == f"card{i}:rag")
+        assert chip.fill.fore_color.rgb == T.RAG_COLORS[card.rag]
+
+
+def test_criteria_headers_are_tinted_by_state():
+    slide = _render_sample("criteria_columns")
+    from deckpilot.renderer.criteria_columns import STATE_COLORS
+
+    for i, column in enumerate(SAMPLES["criteria_columns"].columns):
+        head = next(s for s in slide.shapes if s.name == f"col{i}:head")
+        assert head.fill.fore_color.rgb == STATE_COLORS[column.state]
+
+
+def test_exec_summary_rag_block_matches_the_overall_rating():
+    slide = _render_sample("exec_summary")
+    spec = SAMPLES["exec_summary"]
+    block = next(s for s in slide.shapes if s.name == "verdict:rag")
+    assert block.fill.fore_color.rgb == T.RAG_COLORS[spec.overall_rag]
+
+
+def test_exec_summary_does_not_repeat_its_own_title():
+    spec = SAMPLES["exec_summary"]
+    assert spec.title.rstrip(".") != spec.verdict.rstrip(".")
+
+
+def test_exec_summary_blocks_do_not_overlap():
+    slide = _render_sample("exec_summary")
+    verdict = next(s for s in slide.shapes if s.name == "verdict:box")
+    messages = [s for s in slide.shapes if s.name.endswith(":box") and s.name.startswith("msg")]
+    assert messages
+    assert all(m.top >= verdict.top + verdict.height for m in messages)
+    decisions = [s for s in slide.shapes if s.name == "decisions:box"]
+    if decisions:
+        bottom = max(m.top + m.height for m in messages)
+        assert decisions[0].top >= bottom
