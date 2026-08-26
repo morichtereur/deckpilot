@@ -318,6 +318,20 @@ KPI_LEGEND_GAP = inches(0.08)
 KPI_LEGEND_H = inches(0.20)
 KPI_BEHIND_TOLERANCE = 0.20  # attainment points behind delivery before a row goes red
 
+# Benefits bridge (waterfall) metrics
+BRIDGE_VALUE_BAND_H = inches(0.30)  # room above the tallest column for its label
+BRIDGE_LABEL_BAND_H = inches(0.78)  # category names beneath the axis
+BRIDGE_CAPTION_H = inches(0.18)
+BRIDGE_GUTTER = inches(0.10)
+BRIDGE_CONNECTOR_PT = 0.75
+BRIDGE_MIN_BAR_H = inches(0.03)  # a step too small to see is still drawn
+BRIDGE_VALUE_GAP = inches(0.04)
+# The axis is truncated so the steps are legible: a bridge from 42 to 33.5 drawn
+# from zero makes every lever a sliver. The floor is set below the lowest level
+# by this share of the range, and the slide says the axis is truncated.
+BRIDGE_AXIS_PAD_BELOW = 0.35
+BRIDGE_AXIS_PAD_ABOVE = 0.08
+
 # Executive summary metrics
 EXEC_VERDICT_H = inches(1.05)
 EXEC_RAG_W = inches(1.30)

@@ -16,8 +16,11 @@ from pathlib import Path
 
 from deckpilot.data.models import (
     RAG,
+    BenefitCase,
     BenefitDirection,
+    BenefitLever,
     BenefitMeasure,
+    Confidence,
     GateStatus,
     Governance,
     Milestone,
@@ -654,6 +657,34 @@ BENEFITS = [
      "Jonas Brenner", "ss33"),
 ]
 
+# The cost bridge: where the FY26 finance cost base goes and what moves it.
+#
+# One lever runs the other way on purpose. A bridge made entirely of savings is
+# a bridge that has forgotten the new operating model costs something to run,
+# and it is the first thing a CFO looks for.
+#
+# id, name, value (EUR m, signed), confidence, owner, sub-stream
+BENEFIT_LEVERS = [
+    ("l1", "Process standardisation and automation", -3.4, Confidence.MEDIUM,
+     "Marcus Adeyemi", "ss21"),
+    ("l2", "Location footprint and labour arbitrage", -2.9, Confidence.HIGH,
+     "Priya Raghunathan", "ss13"),
+    ("l3", "Span of control and organisation design", -1.4, Confidence.MEDIUM,
+     "Tobias Lindqvist", "ss12"),
+    ("l4", "Technology and licence consolidation", -0.9, Confidence.LOW,
+     "Rahul Menon", "ss31"),
+    ("l5", "Hub run cost and retained coordination", 0.1, Confidence.HIGH,
+     "Nadia Bergstrom", "ss41"),
+]
+
+BENEFIT_CASE = {
+    "unit": "EUR m",
+    "baseline_label": "FY26 finance cost base",
+    "baseline": 42.0,
+    "target_label": "Steady state FY28",
+    "target": 33.5,
+}
+
 STEERING_COMMITTEE = [
     ("Helena Marchand", "Chief Financial Officer", "Northwind Group"),
     ("Arun Sethi", "Group Financial Controller", "Northwind Group"),
@@ -845,6 +876,21 @@ def build_programme(as_of: date = AS_OF, history_weeks: int = HISTORY_WEEKS) -> 
         for bid, name, unit, baseline, current, target, direction, owner, ss_id in BENEFITS
     ]
 
+    benefit_case = BenefitCase(
+        **BENEFIT_CASE,
+        levers=[
+            BenefitLever(
+                id=lid,
+                name=name,
+                value=value,
+                confidence=confidence,
+                owner=owner,
+                sub_stream_id=ss_id,
+            )
+            for lid, name, value, confidence, owner, ss_id in BENEFIT_LEVERS
+        ],
+    )
+
     return Programme(
         name="Project Meridian",
         client="Northwind GBS",
@@ -857,6 +903,7 @@ def build_programme(as_of: date = AS_OF, history_weeks: int = HISTORY_WEEKS) -> 
         milestones=milestones,
         weekly_status=_build_weekly_status(as_of, history_weeks),
         benefits=benefits,
+        benefit_case=benefit_case,
         governance=governance,
     )
 

@@ -1932,6 +1932,55 @@
       "as_of": "2026-08-26"
     }
   ],
+  "benefit_case": {
+    "unit": "EUR m",
+    "baseline_label": "FY26 finance cost base",
+    "baseline": 42.0,
+    "target_label": "Steady state FY28",
+    "target": 33.5,
+    "levers": [
+      {
+        "id": "l1",
+        "name": "Process standardisation and automation",
+        "value": -3.4,
+        "confidence": "medium",
+        "owner": "Marcus Adeyemi",
+        "sub_stream_id": "ss21"
+      },
+      {
+        "id": "l2",
+        "name": "Location footprint and labour arbitrage",
+        "value": -2.9,
+        "confidence": "high",
+        "owner": "Priya Raghunathan",
+        "sub_stream_id": "ss13"
+      },
+      {
+        "id": "l3",
+        "name": "Span of control and organisation design",
+        "value": -1.4,
+        "confidence": "medium",
+        "owner": "Tobias Lindqvist",
+        "sub_stream_id": "ss12"
+      },
+      {
+        "id": "l4",
+        "name": "Technology and licence consolidation",
+        "value": -0.9,
+        "confidence": "low",
+        "owner": "Rahul Menon",
+        "sub_stream_id": "ss31"
+      },
+      {
+        "id": "l5",
+        "name": "Hub run cost and retained coordination",
+        "value": 0.1,
+        "confidence": "high",
+        "owner": "Nadia Bergstrom",
+        "sub_stream_id": "ss41"
+      }
+    ]
+  },
   "governance": {
     "steering_committee": [
       {

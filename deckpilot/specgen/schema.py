@@ -254,6 +254,33 @@ class AgendaSpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 11. Benefits bridge
+# --------------------------------------------------------------------------
+
+
+class BridgeStep(Spec):
+    """One column of a waterfall.
+
+    `from_value` and `to_value` are the levels either side of the step, so the
+    layout never has to work out a running total - it only has to map values to
+    pixels. An anchor has the two equal and is drawn from the axis floor.
+    """
+
+    label: str = Field(min_length=1, max_length=60)
+    caption: str | None = Field(default=None, max_length=40)
+    kind: Literal["anchor", "increase", "decrease"]
+    from_value: float
+    to_value: float
+    value: str = Field(min_length=1, max_length=16)
+
+
+class BenefitsBridgeSpec(SlideBase):
+    layout: Literal["benefits_bridge"] = "benefits_bridge"
+    unit: str = Field(min_length=1, max_length=12)
+    steps: list[BridgeStep] = Field(min_length=3, max_length=10)
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
@@ -267,7 +294,8 @@ AnySlideSpec = Annotated[
     | CriteriaColumnsSpec
     | ExecSummarySpec
     | KpiScorecardSpec
-    | AgendaSpec,
+    | AgendaSpec
+    | BenefitsBridgeSpec,
     Field(discriminator="layout"),
 ]
 

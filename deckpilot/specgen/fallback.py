@@ -19,6 +19,8 @@ from deckpilot.specgen.schema import (
     AgendaEntry,
     AgendaSpec,
     BenefitRow,
+    BenefitsBridgeSpec,
+    BridgeStep,
     CharterColumn,
     CriteriaColumn,
     CriteriaColumnsSpec,
@@ -393,6 +395,107 @@ def raid_table(programme: Programme, week: str, per_type: int = 3) -> RaidTableS
     )
 
 
+def _money(value: float, unit: str, signed: bool = False) -> str:
+    number = f"{value:+.1f}" if signed else f"{value:.1f}"
+    return f"{number.rstrip('0').rstrip('.') if '.' in number else number} {unit}"
+
+
+def benefits_bridge(programme: Programme, week: str) -> BenefitsBridgeSpec | None:
+    """The cost bridge, baseline to target, one column per lever."""
+    case = programme.benefit_case
+    if case is None:
+        return None
+
+    steps = [
+        BridgeStep(
+            label=case.baseline_label,
+            kind="anchor",
+            from_value=case.baseline,
+            to_value=case.baseline,
+            value=_money(case.baseline, case.unit),
+        )
+    ]
+    running = case.baseline
+    for lever in case.levers:
+        nxt = running + lever.value
+        steps.append(
+            BridgeStep(
+                label=lever.name,
+                caption=f"{lever.confidence.value} confidence",
+                kind="decrease" if lever.is_saving else "increase",
+                from_value=running,
+                to_value=nxt,
+                value=_money(lever.value, case.unit, signed=True),
+            )
+        )
+        running = nxt
+    steps.append(
+        BridgeStep(
+            label=case.target_label,
+            kind="anchor",
+            from_value=case.target,
+            to_value=case.target,
+            value=_money(case.target, case.unit),
+        )
+    )
+
+    savings = [lever for lever in case.levers if lever.is_saving]
+    largest = min(savings, key=lambda lever: lever.value)
+    low = [lever for lever in savings if lever.confidence.value == "low"]
+    reduction = case.total_saving / case.baseline
+
+    share = abs(largest.value) / case.total_saving
+    title = (
+        f"A {reduction:.0%} reduction on a {_money(case.baseline, case.unit)} base, "
+        f"with {largest.short_name.lower()} carrying {share:.0%} of it"
+    )
+    considerations = [
+        f"{largest.name} is the largest single lever at "
+        f"{_money(abs(largest.value), case.unit)}, owned by {largest.owner}"
+    ]
+    if low:
+        at_risk = sum(abs(lever.value) for lever in low)
+        considerations.append(
+            f"{_money(at_risk, case.unit)} of the case rests on low-confidence levers: "
+            + ", ".join(lever.name.lower() for lever in low)
+        )
+    increases = [lever for lever in case.levers if not lever.is_saving]
+    if increases:
+        considerations.append(
+            "The bridge includes the cost of running the new model: "
+            + ", ".join(
+                f"{lever.name.lower()} at {_money(lever.value, case.unit, signed=True)}"
+                for lever in increases
+            )
+        )
+    all_ids = {ss.id for ss in programme.sub_streams}
+    considerations += [raid_line(i) for i in raid_for(programme, all_ids, 1)]
+
+    return BenefitsBridgeSpec(
+        title=title,
+        subtitle=(
+            f"Benefit case | {case.baseline_label} to {case.target_label} | "
+            f"Value axis truncated so the levers are legible"
+        ),
+        unit=case.unit,
+        steps=steps,
+        considerations=considerations[:4],
+        notes=_note(
+            f"The bridge reconciles: {_money(case.baseline, case.unit)} less the levers "
+            f"gives {_money(case.target, case.unit)} exactly.",
+            "Say the axis is truncated before anyone asks - drawn from zero the levers "
+            "would be slivers.",
+            (
+                f"Expect the challenge on confidence. "
+                f"{_money(sum(abs(lever.value) for lever in low), case.unit)} sits on "
+                f"low-confidence levers; that is the number to defend."
+                if low
+                else "Every lever is medium or high confidence."
+            ),
+        ),
+    )
+
+
 def kpi_scorecard(programme: Programme, week: str) -> KpiScorecardSpec | None:
     """Benefit measures against the delivery that is supposed to produce them."""
     if not programme.benefits:
@@ -675,6 +778,7 @@ def build_deck_spec(programme: Programme, week: str | None = None) -> DeckSpec:
         status_overview(programme, week),
         raid_table(programme, week),
         kpi_scorecard(programme, week),
+        benefits_bridge(programme, week),
         divider(2, "Delivery plan", "The roadmap and the gates it has to clear"),
         roadmap(programme, week, today),
         criteria_columns(programme, week),

@@ -14,6 +14,7 @@ from pptx.presentation import Presentation as PresentationType
 
 from deckpilot.renderer import (
     agenda,
+    benefits_bridge,
     criteria_columns,
     exec_summary,
     governance_chart,
@@ -42,6 +43,7 @@ RENDERERS = {
     "exec_summary": exec_summary.render,
     "kpi_scorecard": kpi_scorecard.render,
     "agenda": agenda.render,
+    "benefits_bridge": benefits_bridge.render,
 }
 
 

@@ -245,6 +245,78 @@ class BenefitMeasure(Base):
         return f"{self.name} ({self.unit})"
 
 
+class Confidence(StrEnum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+class BenefitLever(Base):
+    """One step of the cost bridge.
+
+    `value` is signed and expressed in the case's unit: negative takes cost out,
+    positive puts it back. A bridge with no positive step is usually a bridge
+    that has forgotten what the new operating model costs to run.
+    """
+
+    id: str
+    name: str
+    value: float
+    confidence: Confidence
+    owner: str
+    sub_stream_id: str | None = None
+
+    @property
+    def is_saving(self) -> bool:
+        return self.value < 0
+
+    @property
+    def short_name(self) -> str:
+        """The lever's name trimmed to its first idea, for use inside a sentence.
+
+        "Process standardisation and automation" is the right label under a
+        column and too long inside an action title.
+        """
+        for joiner in (" and ", " & "):
+            if joiner in self.name:
+                return self.name.split(joiner)[0]
+        return self.name
+
+
+class BenefitCase(Base):
+    """Baseline cost, the levers that move it, and where it lands."""
+
+    unit: str
+    baseline_label: str
+    baseline: float
+    target_label: str
+    target: float
+    levers: list[BenefitLever] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _bridge_reconciles(self) -> Self:
+        computed = self.baseline + sum(lever.value for lever in self.levers)
+        if abs(computed - self.target) > 0.05:
+            raise ValueError(
+                f"the benefit case does not bridge: {self.baseline} plus the levers "
+                f"gives {computed:.2f}, but the target is {self.target}"
+            )
+        return self
+
+    @property
+    def running_totals(self) -> list[float]:
+        """The value at the top of each step, baseline first, target last."""
+        totals, running = [self.baseline], self.baseline
+        for lever in self.levers:
+            running += lever.value
+            totals.append(running)
+        return totals
+
+    @property
+    def total_saving(self) -> float:
+        return self.baseline - self.target
+
+
 class WeeklyStatus(Base):
     """One sub-stream's report for one ISO week."""
 
@@ -283,6 +355,7 @@ class Programme(Base):
     milestones: list[Milestone] = Field(min_length=1)
     weekly_status: list[WeeklyStatus] = Field(min_length=1)
     benefits: list[BenefitMeasure] = Field(default_factory=list)
+    benefit_case: BenefitCase | None = None
     governance: Governance
 
     # -- lookups ----------------------------------------------------------
@@ -402,6 +475,14 @@ class Programme(Base):
                     f"benefit {benefit.id} is measured on {benefit.as_of}, "
                     f"outside the programme window"
                 )
+
+        if self.benefit_case is not None:
+            for lever in self.benefit_case.levers:
+                if lever.sub_stream_id is not None and lever.sub_stream_id not in known_ss:
+                    raise ValueError(
+                        f"benefit lever {lever.id} references unknown sub-stream "
+                        f"{lever.sub_stream_id!r}"
+                    )
 
         benefit_ids = [b.id for b in self.benefits]
         if len(set(benefit_ids)) != len(benefit_ids):
