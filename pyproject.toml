@@ -19,6 +19,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
+# Visual QA only, and macOS only: LibreOffice renders the deck to PDF and
+# CoreGraphics turns each page into a PNG. Nothing the library itself needs.
+qa = ["pyobjc-framework-Quartz>=10.0; sys_platform == 'darwin'"]
 
 [project.scripts]
 deckpilot = "deckpilot.cli:cli"

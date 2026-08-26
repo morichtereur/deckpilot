@@ -58,6 +58,36 @@ def tint(color: RGBColor, amount: float) -> RGBColor:
     return RGBColor(*(int(round(c + (0xFF - c) * amount)) for c in color))
 
 
+def relative_luminance(color: RGBColor) -> float:
+    """WCAG relative luminance, 0 for black and 1 for white."""
+
+    def channel(value: int) -> float:
+        srgb = value / 255.0
+        return srgb / 12.92 if srgb <= 0.04045 else ((srgb + 0.055) / 1.055) ** 2.4
+
+    r, g, b = (channel(c) for c in color)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast_ratio(a: RGBColor, b: RGBColor) -> float:
+    lighter, darker = sorted((relative_luminance(a), relative_luminance(b)), reverse=True)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def on_color(
+    background: RGBColor, light: RGBColor | None = None, dark: RGBColor | None = None
+) -> RGBColor:
+    """Whichever of `light` and `dark` reads better on `background`.
+
+    Bars are coloured by status, so a fixed label colour is wrong for half of
+    them: white on a pale "planned" fill is close to unreadable, and dark text on
+    the deep in-progress fill is worse. The choice has to follow the fill.
+    """
+    light = WHITE if light is None else light
+    dark = GRAY_DARK if dark is None else dark
+    return light if contrast_ratio(background, light) >= contrast_ratio(background, dark) else dark
+
+
 def shade(color: RGBColor, amount: float) -> RGBColor:
     """Blend `color` toward black."""
     amount = max(0.0, min(1.0, amount))

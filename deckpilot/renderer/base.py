@@ -52,6 +52,20 @@ def add_slide(prs: PresentationType) -> Slide:
 # --------------------------------------------------------------------------
 
 
+def _drop_theme_style(shape) -> None:
+    """Remove the <p:style> block python-pptx attaches to new autoshapes.
+
+    It references the theme's accent colour, line and - the reason this matters -
+    effect set, which is a drop shadow. Setting an empty <a:effectLst/> is enough
+    for PowerPoint but not for every renderer, and a deck whose shapes gain
+    shadows depending on who opens it is not a deck we control. Every fill, line
+    and font here is set explicitly, so nothing of value is inherited anyway.
+    """
+    element = shape._element
+    for style in element.findall(qn("p:style")):
+        element.remove(style)
+
+
 def add_rect(
     slide: Slide,
     x: int,
@@ -71,6 +85,7 @@ def add_rect(
     kind = shape_type or (MSO_SHAPE.ROUNDED_RECTANGLE if rounded else MSO_SHAPE.RECTANGLE)
     shape = slide.shapes.add_shape(kind, Emu(x), Emu(y), Emu(w), Emu(h))
     shape.shadow.inherit = False
+    _drop_theme_style(shape)
 
     if fill is None:
         shape.fill.background()
@@ -103,6 +118,7 @@ def add_line(
     connector.line.color.rgb = color
     connector.line.width = Pt(width_pt)
     connector.shadow.inherit = False
+    _drop_theme_style(connector)
     return connector
 
 
@@ -279,7 +295,7 @@ def _place(req: FitRequest, size: float) -> None:
         )
 
 
-MAX_EXTRA_SPACE_AFTER_PT = 10.0
+MAX_EXTRA_SPACE_AFTER_PT = 14.0
 
 
 def _distribute_slack(live: list[FitRequest], size: float) -> None:
@@ -516,9 +532,10 @@ def number_badge(
     *,
     diameter: int = T.BADGE_D,
     fill: RGBColor = T.SECONDARY,
-    text_color: RGBColor = T.WHITE,
+    text_color: RGBColor | None = None,
     name: str | None = None,
 ):
+    text_color = T.on_color(fill) if text_color is None else text_color
     badge = add_rect(
         slide,
         x,
@@ -558,9 +575,10 @@ def status_chip(
     *,
     w: int = T.CHIP_W,
     h: int = T.CHIP_H,
-    text_color: RGBColor = T.WHITE,
+    text_color: RGBColor | None = None,
     name: str | None = None,
 ):
+    text_color = T.on_color(color) if text_color is None else text_color
     chip = add_rect(slide, x, y, w, h, fill=color, rounded=True, name=name or f"chip:{label}")
     fit_text(
         chip.text_frame,

@@ -24,7 +24,11 @@ ACCENT_OFFSET_X = T.inches(1.6)  # how far past the right edge its centre sits
 ACCENT_OFFSET_Y = T.inches(1.1)  # how far below the bottom edge its centre sits
 
 NUMBER_W = T.inches(3.0)
-NUMBER_H = T.inches(1.90)  # the numeral's own line box at FS_SECTION_NUMBER
+# The box has to hold the numeral's full line box, or the fit shrinks the number
+# below the oversized size this layout exists for. A numeral's cap height is well
+# short of its em, so the gap down to the title reads a little larger than the
+# measurement suggests; that is the price of not clipping the glyph.
+NUMBER_H = T.inches(1.92)
 TITLE_W = T.inches(7.4)
 TITLE_H = T.inches(0.56)
 TITLE_KICKER_GAP = T.inches(0.14)
@@ -68,9 +72,8 @@ def render(prs: PresentationType, spec: SectionDividerSpec) -> Slide:
     )
     number.text_frame.margin_left = number.text_frame.margin_right = Emu(0)
 
-    title = add_textbox(
-        slide, BLOCK_LEFT, BLOCK_TOP + NUMBER_H, TITLE_W, TITLE_H, name="section:title"
-    )
+    title_top = BLOCK_TOP + NUMBER_H
+    title = add_textbox(slide, BLOCK_LEFT, title_top, TITLE_W, TITLE_H, name="section:title")
     fit_text(
         title.text_frame,
         spec.title,
@@ -91,7 +94,7 @@ def render(prs: PresentationType, spec: SectionDividerSpec) -> Slide:
         kicker = add_textbox(
             slide,
             BLOCK_LEFT,
-            BLOCK_TOP + NUMBER_H + TITLE_H + TITLE_KICKER_GAP,
+            title_top + TITLE_H + TITLE_KICKER_GAP,
             TITLE_W,
             KICKER_H,
             name="section:kicker",

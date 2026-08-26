@@ -215,7 +215,7 @@ def _bars(slide: Slide, rows: list[GanttRow], grid: MonthGrid, rows_top: int, ro
                 BAR_LABEL_PT,
                 where=f"roadmap/{row.sub_stream}/{bar.label}",
                 style=TextStyle(
-                    color=T.WHITE,
+                    color=T.on_color(T.PHASE_COLORS[bar.status]),
                     align=PP_ALIGN.LEFT,
                     anchor=MSO_ANCHOR.MIDDLE,
                     line_spacing=1.0,
