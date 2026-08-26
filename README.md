@@ -1,5 +1,9 @@
 # deckpilot
 
+[![CI](https://github.com/morichtereur/deckpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/morichtereur/deckpilot/actions/workflows/ci.yml)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/licence-MIT-green.svg)](LICENSE)
+
 **Consulting-grade PowerPoint status decks, generated from structured programme data.**
 
 Feed it a transformation programme — work packages, stage gates, a RAID log, a benefit
