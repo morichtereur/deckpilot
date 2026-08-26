@@ -13,6 +13,7 @@ from pathlib import Path
 from pptx.presentation import Presentation as PresentationType
 
 from deckpilot.renderer import (
+    agenda,
     criteria_columns,
     exec_summary,
     governance_chart,
@@ -40,6 +41,7 @@ RENDERERS = {
     "criteria_columns": criteria_columns.render,
     "exec_summary": exec_summary.render,
     "kpi_scorecard": kpi_scorecard.render,
+    "agenda": agenda.render,
 }
 
 
@@ -49,8 +51,21 @@ def build(spec: DeckSpec) -> PresentationType:
         render = RENDERERS.get(slide_spec.layout)
         if render is None:  # pragma: no cover - the schema forbids it
             raise KeyError(f"no renderer for layout {slide_spec.layout!r}")
-        render(prs, slide_spec, page)
+        slide = render(prs, slide_spec, page)
+        _attach_notes(slide, slide_spec.notes)
     return prs
+
+
+def _attach_notes(slide, notes: str) -> None:
+    """Write the speaker notes, if there are any.
+
+    Touching `notes_slide` creates one, so an empty note is skipped rather than
+    written blank - a deck full of empty notes pages is a deck that looks like it
+    has notes.
+    """
+    if not notes:
+        return
+    slide.notes_slide.notes_text_frame.text = notes
 
 
 def build_to(spec: DeckSpec, path: str | Path) -> Path:

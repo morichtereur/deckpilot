@@ -9,6 +9,8 @@
 from __future__ import annotations
 
 import logging
+import sys
+from importlib import import_module
 from pathlib import Path
 
 import click
@@ -104,6 +106,51 @@ def build(data: Path, week: str | None, out: Path, llm: bool, spec_out: Path | N
     _summarise(spec, out)
     if check:
         _run_checks(out)
+
+
+@cli.command(help="List the layouts this build can render.")
+def layouts() -> None:
+    """Descriptions come from each renderer's own docstring, so they cannot drift."""
+    from deckpilot.renderer import deck as deck_module
+
+    width = max(len(name) for name in deck_module.RENDERERS)
+    missing = []
+    for name in sorted(deck_module.RENDERERS):
+        module = import_module(f"deckpilot.renderer.{name}")
+        summary = (module.__doc__ or "").strip().splitlines()[0]
+        if name not in SAMPLES:
+            missing.append(name)
+        click.echo(f"{'-' if name in missing else ' '} {name:<{width}}  {summary}")
+    if missing:
+        click.echo("\n- marks a layout with no sample spec, so render-one cannot show it.")
+
+
+@cli.command(help="Run the geometry checks over a deck that already exists.")
+@click.argument("deck_path", type=click.Path(exists=True, path_type=Path))
+def check(deck_path: Path) -> None:
+    findings = check_deck(deck_path)
+    click.echo(report(findings))
+    if any(f.severity == "error" for f in findings):
+        raise SystemExit(1)
+
+
+@cli.command(help="Convert a deck to PDF with LibreOffice.")
+@click.argument("deck_path", type=click.Path(exists=True, path_type=Path))
+@click.option("--out", type=click.Path(path_type=Path), default=None,
+              help="Output directory. Defaults to the deck's own directory.")
+def pdf(deck_path: Path, out: Path | None) -> None:
+    """Handy for circulating a read-only copy, and the first half of the visual QA
+    loop that `scripts/qa.py` runs."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    try:
+        from qa import to_pdf
+    except ImportError as exc:  # pragma: no cover - only if scripts/ is missing
+        raise click.ClickException(f"could not load the conversion helper: {exc}") from exc
+    try:
+        written = to_pdf(deck_path, out or deck_path.parent)
+    except RuntimeError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(f"Wrote {written}")
 
 
 @cli.command("render-one", help="Render a single layout from its sample spec.")

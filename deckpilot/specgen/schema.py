@@ -25,6 +25,8 @@ class SlideBase(Spec):
     title: str = Field(min_length=1, max_length=160)
     subtitle: str | None = Field(default=None, max_length=200)
     considerations: list[str] = Field(default_factory=list, max_length=6)
+    # Speaker notes travel with the slide because they are content, not layout.
+    notes: str = Field(default="", max_length=1600)
 
 
 # --------------------------------------------------------------------------
@@ -37,6 +39,7 @@ class SectionDividerSpec(Spec):
     number: str = Field(min_length=1, max_length=2)
     title: str = Field(min_length=1, max_length=60)
     kicker: str | None = Field(default=None, max_length=120)
+    notes: str = Field(default="", max_length=1600)
 
 
 # --------------------------------------------------------------------------
@@ -234,6 +237,23 @@ class KpiScorecardSpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 10. Agenda
+# --------------------------------------------------------------------------
+
+
+class AgendaEntry(Spec):
+    number: str = Field(min_length=1, max_length=2)
+    title: str = Field(min_length=1, max_length=60)
+    caption: str | None = Field(default=None, max_length=120)
+    page: int = Field(ge=1)
+
+
+class AgendaSpec(SlideBase):
+    layout: Literal["agenda"] = "agenda"
+    entries: list[AgendaEntry] = Field(min_length=2, max_length=8)
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
@@ -246,7 +266,8 @@ AnySlideSpec = Annotated[
     | StatusOverviewSpec
     | CriteriaColumnsSpec
     | ExecSummarySpec
-    | KpiScorecardSpec,
+    | KpiScorecardSpec
+    | AgendaSpec,
     Field(discriminator="layout"),
 ]
 

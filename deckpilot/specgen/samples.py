@@ -188,4 +188,7 @@ SAMPLES: dict[str, object] = {
     "raid_table": _from_programme(fallback.raid_table),
     "criteria_columns": _from_programme(fallback.criteria_columns),
     "kpi_scorecard": _from_programme(fallback.kpi_scorecard),
+    "agenda": next(
+        s for s in fallback.build_deck_spec(build_programme()).slides if s.layout == "agenda"
+    ),
 }

@@ -2,11 +2,12 @@
 
 **Consulting-grade PowerPoint status decks, generated from structured programme data.**
 
-Feed it a transformation programme — work packages, stage gates, a RAID log, weekly
-sub-stream reports — and it produces a thirteen-slide deck that a consultant could
-take into a steering committee without apologising for it. Every slide is built from
-native PowerPoint shapes: the text is selectable, the roadmap bars are draggable, the
-RAID log is a real table you can sort. Nothing is an image. It runs end to end with no
+Feed it a transformation programme — work packages, stage gates, a RAID log, benefit
+measures, weekly sub-stream reports — and it produces an eighteen-slide deck that a
+consultant could take into a steering committee without apologising for it. Every slide
+is built from native PowerPoint shapes: the text is selectable, the roadmap bars are
+draggable, the RAID log is a real table you can sort. Nothing is an image. Every content
+slide carries speaker notes derived from the same figures. It runs end to end with no
 API key.
 
 ![Executive summary](examples/screenshots/exec-summary.png)
@@ -28,9 +29,10 @@ no network, no configuration.
 
 ```
 Wrote deckpilot/data/programme.json - 12 sub-streams, 18 RAID items
-Wrote examples/deck.pptx - 13 slides (1 x criteria_columns, 1 x exec_summary,
-  1 x governance_chart, 1 x raid_table, 1 x roadmap_gantt, 4 x section_divider,
-  1 x status_overview, 3 x workstream_charter)
+Wrote examples/deck.pptx - 18 slides (1 x agenda, 1 x criteria_columns,
+  1 x exec_summary, 1 x governance_chart, 1 x kpi_scorecard, 3 x raid_table,
+  1 x roadmap_gantt, 5 x section_divider, 1 x status_overview,
+  3 x workstream_charter)
 Geometry check: clean.
 ```
 
@@ -40,10 +42,14 @@ Other commands:
 deckpilot build --data deckpilot/data/programme.json --week 2026-W34 --out deck.pptx
 deckpilot build --data deckpilot/data/programme.json --out deck.pptx --llm
 deckpilot render-one --layout roadmap_gantt --out single.pptx
+deckpilot layouts
+deckpilot check deck.pptx
+deckpilot pdf deck.pptx
 ```
 
 `render-one` builds a single layout from its sample spec, which is how you work on one
-without rebuilding twelve other slides first.
+without rebuilding seventeen other slides first. `check` runs the geometry linter over a
+deck that already exists, and `layouts` lists what this build can render.
 
 ---
 
@@ -74,6 +80,7 @@ let a language model touch the deck at all.
 | Module | Responsibility |
 |---|---|
 | `data/` | The programme model and a hand-authored synthetic dataset |
+| `renderer/timeline.py` | Roadmap date arithmetic, isolated so it can be tested as arithmetic |
 | `theme/tokens.py` | Every colour, size and grid constant in the project |
 | `specgen/` | Deterministic spec builder, plus the optional LLM overlay |
 | `renderer/` | One module per layout, over a shared fitting and shape toolkit |
@@ -92,6 +99,9 @@ let a language model touch the deck at all.
 | **Governance chart** — three tiers joined by native connectors, each work package split into core and contributing teams | ![](examples/screenshots/governance-chart.png) |
 | **Criteria columns** — a question per column and the characteristics that answer it; also covers WHY / WHAT / HOW framings | ![](examples/screenshots/criteria-columns.png) |
 | **Executive summary** — rated verdict, the messages behind it, the decisions being asked for | ![](examples/screenshots/exec-summary.png) |
+| **KPI scorecard** — benefit measures from baseline to target, each bar marked at the delivery progress of the stream producing it | ![](examples/screenshots/kpi-scorecard.png) |
+| **Agenda** — sections and the page each one starts on, resolved after the appendix has been paginated | ![](examples/screenshots/agenda.png) |
+| **RAID appendix** — the full log split across as many slides as it needs, with split groups re-announced | ![](examples/screenshots/raid-appendix.png) |
 | **Section divider** — a full-bleed break, and the only slide in the deck with no footer | ![](examples/screenshots/section-divider.png) |
 
 ---
@@ -130,10 +140,25 @@ can be tested as arithmetic instead of by squinting at a slide.
 PowerPoint will still grow the row if a cell wraps further — and the table walks off the
 bottom of the slide. Row heights have to be computed from the wrapped line count.
 
+**Pagination is a measurement problem, and the trade runs both ways.** Type size and page
+count trade against each other. For a summary slide the count is fixed at one and the type
+has to give; for an appendix a slide costs nothing and unreadable type costs the reader, so
+it holds the dense size and adds slides instead. Filling greedily then leaves sixteen rows
+on one slide and two on the next, so the per-slide budget is shrunk as far as it will go
+without adding a slide — which spreads the same rows evenly, nine and nine. And because the
+paginator's size is also the renderer's ceiling, every page comes out at the same size: a
+second slide set a point off the first looks like a different document.
+
 **Defaults leak.** python-pptx attaches a theme style block to every new autoshape, which
 carries a drop shadow. An empty `<a:effectLst/>` suppresses it in PowerPoint but not in
 every renderer, so the whole style block is stripped — a deck whose shapes grow shadows
 depending on who opens it is not a deck you control.
+
+**A number needs something to be measured against.** A benefit 29% of the way to target is
+good or bad depending on how much of the work that produces it has been done, so each bar
+on the scorecard carries a marker at the delivery progress of its own sub-stream. Measuring
+benefits against elapsed calendar time — the obvious first choice — marks every measure late
+for the first two thirds of a programme, because benefits back-load.
 
 Then there is the part that only shows up on a screen: white bar labels are unreadable on
 the pale "complete" fill and fine on the deep "in progress" one, so label colour is chosen
@@ -167,7 +192,8 @@ Two passes, because they catch different faults.
 
 ```bash
 python scripts/qa.py examples/deck.pptx        # lint the geometry, then render every slide
-pytest                                          # 199 tests
+deckpilot check examples/deck.pptx             # the geometry half, on its own
+pytest                                          # 253 tests
 ruff check .
 ```
 
@@ -198,6 +224,10 @@ ruff check .
 python -m deckpilot.data.generate     # regenerate the synthetic programme
 ```
 
+Speaker notes are generated alongside each slide from the same figures, in the spec builder
+rather than in the renderer, so a note cannot quote a number the slide does not show. That
+is the usual failure of speaker notes — written once, then left behind by the data.
+
 The dataset in `data/generate.py` is hand-authored rather than randomised. A status deck
 only reads as real if the RAID log argues with the roadmap and the weekly reports argue
 with both, and random generators do not produce that. Only history is derived: each
@@ -223,6 +253,9 @@ put on the path and nothing reports an error. Clear it:
 ```bash
 chflags nohidden .venv/lib/python3.*/site-packages/*.pth
 ```
+
+If the flag keeps coming back, something on the machine is re-applying it — run the CLI as
+`python -m deckpilot.cli ...` instead, which does not depend on the path file.
 
 **`scripts/qa.py` cannot find LibreOffice** — it looks in `/Applications/LibreOffice.app`
 and then on `PATH`. Pass `--no-images` to run the geometry check alone; that half needs

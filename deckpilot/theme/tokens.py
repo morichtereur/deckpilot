@@ -234,6 +234,13 @@ CRITERIA_HEAD_H = inches(0.62)
 CRITERIA_LABEL_H = inches(0.20)
 CRITERIA_PAD = inches(0.10)
 
+# Agenda metrics
+AGENDA_ROW_MAX_H = inches(0.86)
+AGENDA_NUMBER_W = inches(0.62)
+AGENDA_PAGE_W = inches(0.70)
+AGENDA_PAD = inches(0.14)
+AGENDA_TITLE_H = inches(0.30)
+
 # KPI scorecard metrics
 KPI_HEADER_H = inches(0.28)
 KPI_ROW_MAX_H = inches(0.60)
