@@ -16,6 +16,8 @@ from pathlib import Path
 
 from deckpilot.data.models import (
     RAG,
+    BenefitDirection,
+    BenefitMeasure,
     GateStatus,
     Governance,
     Milestone,
@@ -623,6 +625,35 @@ MILESTONES = [
     ("m38", "Wave 2 automations live", "2027-01-15", "ss32", False),
 ]
 
+# id, name, unit, baseline, current, target, direction, owner, sub-stream
+#
+# Benefits are judged against the delivery progress of the stream that produces
+# them, not against elapsed calendar time - benefits back-load, so nothing
+# realises until the build lands, and a calendar yardstick marks every measure
+# late for the first two thirds of a programme.
+#
+# The current values are set so the picture is genuinely mixed: collections and
+# the close are running ahead of their streams, change readiness well ahead,
+# while touchless invoicing, master data and cost to serve lag the delivery that
+# is supposed to be producing them. A benefits slide where every measure agrees
+# with the plan is a benefits slide nobody believes.
+BENEFITS = [
+    ("b1", "Touchless invoice rate", "%", 41, 51, 75, BenefitDirection.UP,
+     "Chiara Bellandi", "ss22"),
+    ("b2", "Days sales outstanding", "days", 54, 49, 47, BenefitDirection.DOWN,
+     "Daniel Okonkwo", "ss23"),
+    ("b3", "Close cycle length", "days", 9, 7.5, 7, BenefitDirection.DOWN,
+     "Marcus Adeyemi", "ss21"),
+    ("b4", "Vendor master validation pass rate", "%", 77, 83, 98, BenefitDirection.UP,
+     "Anneke de Vries", "ss24"),
+    ("b5", "Automation benefit realised", "FTE", 0, 7.2, 18.0, BenefitDirection.UP,
+     "Sofia Marchetti", "ss32"),
+    ("b6", "Change readiness index", "index", 54, 71, 80, BenefitDirection.UP,
+     "Laura Nkemelu", "ss42"),
+    ("b7", "Finance cost to serve", "EUR m", 42.0, 39.9, 33.5, BenefitDirection.DOWN,
+     "Jonas Brenner", "ss33"),
+]
+
 STEERING_COMMITTEE = [
     ("Helena Marchand", "Chief Financial Officer", "Northwind Group"),
     ("Arun Sethi", "Group Financial Controller", "Northwind Group"),
@@ -798,6 +829,22 @@ def build_programme(as_of: date = AS_OF, history_weeks: int = HISTORY_WEEKS) -> 
         comments=GOVERNANCE_COMMENTS,
     )
 
+    benefits = [
+        BenefitMeasure(
+            id=bid,
+            name=name,
+            unit=unit,
+            baseline=baseline,
+            current=current,
+            target=target,
+            direction=direction,
+            owner=owner,
+            sub_stream_id=ss_id,
+            as_of=as_of,
+        )
+        for bid, name, unit, baseline, current, target, direction, owner, ss_id in BENEFITS
+    ]
+
     return Programme(
         name="Project Meridian",
         client="Northwind GBS",
@@ -809,6 +856,7 @@ def build_programme(as_of: date = AS_OF, history_weeks: int = HISTORY_WEEKS) -> 
         raid=raid,
         milestones=milestones,
         weekly_status=_build_weekly_status(as_of, history_weeks),
+        benefits=benefits,
         governance=governance,
     )
 
@@ -822,7 +870,8 @@ def main() -> None:
     print(
         f"Wrote {out} - {len(programme.work_packages)} work packages, "
         f"{len(programme.sub_streams)} sub-streams, {len(programme.raid)} RAID items, "
-        f"{len(programme.milestones)} milestones, {len(programme.weekly_status)} weekly reports"
+        f"{len(programme.milestones)} milestones, {len(programme.benefits)} benefit measures, "
+        f"{len(programme.weekly_status)} weekly reports"
     )
 
 

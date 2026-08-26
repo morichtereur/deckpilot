@@ -1846,6 +1846,92 @@
       "next_milestone_id": "m21"
     }
   ],
+  "benefits": [
+    {
+      "id": "b1",
+      "name": "Touchless invoice rate",
+      "unit": "%",
+      "baseline": 41.0,
+      "current": 51.0,
+      "target": 75.0,
+      "owner": "Chiara Bellandi",
+      "sub_stream_id": "ss22",
+      "direction": "up",
+      "as_of": "2026-08-26"
+    },
+    {
+      "id": "b2",
+      "name": "Days sales outstanding",
+      "unit": "days",
+      "baseline": 54.0,
+      "current": 49.0,
+      "target": 47.0,
+      "owner": "Daniel Okonkwo",
+      "sub_stream_id": "ss23",
+      "direction": "down",
+      "as_of": "2026-08-26"
+    },
+    {
+      "id": "b3",
+      "name": "Close cycle length",
+      "unit": "days",
+      "baseline": 9.0,
+      "current": 7.5,
+      "target": 7.0,
+      "owner": "Marcus Adeyemi",
+      "sub_stream_id": "ss21",
+      "direction": "down",
+      "as_of": "2026-08-26"
+    },
+    {
+      "id": "b4",
+      "name": "Vendor master validation pass rate",
+      "unit": "%",
+      "baseline": 77.0,
+      "current": 83.0,
+      "target": 98.0,
+      "owner": "Anneke de Vries",
+      "sub_stream_id": "ss24",
+      "direction": "up",
+      "as_of": "2026-08-26"
+    },
+    {
+      "id": "b5",
+      "name": "Automation benefit realised",
+      "unit": "FTE",
+      "baseline": 0.0,
+      "current": 7.2,
+      "target": 18.0,
+      "owner": "Sofia Marchetti",
+      "sub_stream_id": "ss32",
+      "direction": "up",
+      "as_of": "2026-08-26"
+    },
+    {
+      "id": "b6",
+      "name": "Change readiness index",
+      "unit": "index",
+      "baseline": 54.0,
+      "current": 71.0,
+      "target": 80.0,
+      "owner": "Laura Nkemelu",
+      "sub_stream_id": "ss42",
+      "direction": "up",
+      "as_of": "2026-08-26"
+    },
+    {
+      "id": "b7",
+      "name": "Finance cost to serve",
+      "unit": "EUR m",
+      "baseline": 42.0,
+      "current": 39.9,
+      "target": 33.5,
+      "owner": "Jonas Brenner",
+      "sub_stream_id": "ss33",
+      "direction": "down",
+      "as_of": "2026-08-26"
+    }
+  ],
   "governance": {
     "steering_committee": [
       {

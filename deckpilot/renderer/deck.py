@@ -16,6 +16,7 @@ from deckpilot.renderer import (
     criteria_columns,
     exec_summary,
     governance_chart,
+    kpi_scorecard,
     raid_table,
     roadmap_gantt,
     section_divider,
@@ -38,6 +39,7 @@ RENDERERS = {
     "status_overview": status_overview.render,
     "criteria_columns": criteria_columns.render,
     "exec_summary": exec_summary.render,
+    "kpi_scorecard": kpi_scorecard.render,
 }
 
 

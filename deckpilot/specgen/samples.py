@@ -187,4 +187,5 @@ SAMPLES: dict[str, object] = {
     "status_overview": _from_programme(fallback.status_overview),
     "raid_table": _from_programme(fallback.raid_table),
     "criteria_columns": _from_programme(fallback.criteria_columns),
+    "kpi_scorecard": _from_programme(fallback.kpi_scorecard),
 }

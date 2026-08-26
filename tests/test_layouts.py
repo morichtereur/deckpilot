@@ -6,6 +6,7 @@ import logging
 import pytest
 
 from deckpilot.renderer import section_divider, workstream_charter
+from deckpilot.renderer import text_metrics as tm
 from deckpilot.renderer.base import new_deck
 from deckpilot.renderer.qa import check_slide
 from deckpilot.specgen.samples import SAMPLES
@@ -406,3 +407,67 @@ def test_exec_summary_blocks_do_not_overlap():
     if decisions:
         bottom = max(m.top + m.height for m in messages)
         assert decisions[0].top >= bottom
+
+
+# -- KPI scorecard ---------------------------------------------------------
+
+
+def test_kpi_scorecard_is_geometrically_clean():
+    assert errors(_render_sample("kpi_scorecard"), 5) == []
+
+
+def test_kpi_bars_match_their_attainment():
+    slide = _render_sample("kpi_scorecard")
+    spec = SAMPLES["kpi_scorecard"]
+    for i, row in enumerate(spec.rows):
+        track = next(s for s in slide.shapes if s.name == f"kpi{i}:track")
+        fills = [s for s in slide.shapes if s.name == f"marker:kpi{i}fill"]
+        if row.attainment == 0:
+            assert not fills
+            continue
+        fill = fills[0]
+        assert fill.left == track.left
+        assert fill.width == pytest.approx(track.width * row.attainment, abs=2)
+        assert fill.width <= track.width
+
+
+def test_the_expected_marker_sits_at_the_delivery_progress():
+    slide = _render_sample("kpi_scorecard")
+    spec = SAMPLES["kpi_scorecard"]
+    for i, row in enumerate(spec.rows):
+        track = next(s for s in slide.shapes if s.name == f"kpi{i}:track")
+        tick = next(s for s in slide.shapes if s.name == f"marker:kpi{i}expected")
+        centre = tick.left + tick.width / 2
+        assert centre == pytest.approx(
+            track.left + track.width * row.expected, abs=T.KPI_TICK_W
+        )
+        assert tick.left >= track.left
+        assert tick.left + tick.width <= track.left + track.width
+
+
+def test_a_bar_is_green_only_once_it_has_caught_its_delivery():
+    from deckpilot.renderer.kpi_scorecard import bar_colour
+    from deckpilot.specgen.schema import BenefitRow
+
+    def row(attained, expected):
+        return BenefitRow(
+            name="m", owner="o", baseline="0", current="1", target="2",
+            attainment=attained, expected=expected,
+        )
+
+    assert bar_colour(row(0.6, 0.5)) == T.STATUS_GREEN
+    assert bar_colour(row(0.5, 0.5)) == T.STATUS_GREEN
+    assert bar_colour(row(0.45, 0.5)) == T.STATUS_AMBER
+    assert bar_colour(row(0.2, 0.5)) == T.STATUS_RED
+
+
+def test_kpi_figures_never_wrap():
+    """A figure that wraps onto a second line is a column that is too narrow."""
+    slide = _render_sample("kpi_scorecard")
+    for shape in slide.shapes:
+        if any(shape.name.endswith(f":{k}") for k in ("baseline", "current", "target")):
+            assert len(shape.text_frame.paragraphs) == 1
+            text = shape.text_frame.paragraphs[0].runs[0].text
+            size = shape.text_frame.paragraphs[0].runs[0].font.size.pt
+            width = (shape.width - 2 * T.TEXT_INSET) / T.EMU_PER_PT
+            assert tm.line_count(text, width, size, bold=True) == 1, text

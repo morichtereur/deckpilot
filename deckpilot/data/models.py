@@ -54,6 +54,13 @@ class PhaseStatus(StrEnum):
     AT_RISK = "at-risk"
 
 
+class BenefitDirection(StrEnum):
+    """Whether a measure improves by going up or by going down."""
+
+    UP = "up"
+    DOWN = "down"
+
+
 class MilestoneStatus(StrEnum):
     ACHIEVED = "achieved"
     ON_TRACK = "on-track"
@@ -172,6 +179,72 @@ class Milestone(Base):
     major: bool = False
 
 
+class BenefitMeasure(Base):
+    """One tracked measure, from where it started to where it has to get to."""
+
+    id: str
+    name: str
+    unit: str
+    baseline: float
+    current: float
+    target: float
+    owner: str
+    sub_stream_id: str
+    direction: BenefitDirection
+    as_of: date
+
+    @model_validator(mode="after")
+    def _target_moves(self) -> Self:
+        if self.target == self.baseline:
+            raise ValueError(f"benefit {self.id} has a target equal to its baseline")
+        improving_up = self.direction is BenefitDirection.UP
+        if improving_up != (self.target > self.baseline):
+            raise ValueError(
+                f"benefit {self.id} is declared {self.direction.value} but its target "
+                f"({self.target}) moves the other way from its baseline ({self.baseline})"
+            )
+        return self
+
+    @property
+    def attainment(self) -> float:
+        """How far the measure has travelled from baseline to target, 0.0 to 1.0.
+
+        Clamped: a measure that has overshot its target is at 1.0, and one that
+        has moved backwards is at 0.0. Both are reported honestly elsewhere - the
+        clamp only keeps a progress bar inside its track.
+        """
+        span = self.target - self.baseline
+        moved = self.current - self.baseline
+        return max(0.0, min(1.0, moved / span))
+
+    @property
+    def moved_backwards(self) -> bool:
+        span = self.target - self.baseline
+        return (self.current - self.baseline) / span < 0
+
+    def plain(self, value: float) -> str:
+        """The bare number, with no unit and no trailing zero."""
+        return f"{int(value)}" if value == int(value) else f"{value:.1f}"
+
+    def format(self, value: float) -> str:
+        """A measure's value carrying its unit, for prose."""
+        if self.unit == "%":
+            return f"{self.plain(value)}%"
+        return f"{self.plain(value)} {self.unit}".strip()
+
+    @property
+    def display_name(self) -> str:
+        """The measure's name carrying its unit, so the figures can go bare.
+
+        A scorecard column repeating "EUR m" on every row wraps the number onto a
+        second line and tells the reader nothing they did not already know. A unit
+        the name already carries - "Change readiness index (index)" - is dropped.
+        """
+        if self.unit == "%" or self.unit.lower() in self.name.lower():
+            return self.name
+        return f"{self.name} ({self.unit})"
+
+
 class WeeklyStatus(Base):
     """One sub-stream's report for one ISO week."""
 
@@ -209,6 +282,7 @@ class Programme(Base):
     raid: list[RaidItem] = Field(min_length=1)
     milestones: list[Milestone] = Field(min_length=1)
     weekly_status: list[WeeklyStatus] = Field(min_length=1)
+    benefits: list[BenefitMeasure] = Field(default_factory=list)
     governance: Governance
 
     # -- lookups ----------------------------------------------------------
@@ -234,6 +308,17 @@ class Programme(Base):
             if any(ss.id == sub_stream_id for ss in wp.sub_streams):
                 return wp
         raise KeyError(sub_stream_id)
+
+    def benefit(self, benefit_id: str) -> BenefitMeasure:
+        for b in self.benefits:
+            if b.id == benefit_id:
+                return b
+        raise KeyError(benefit_id)
+
+    def elapsed_fraction(self, as_of: date) -> float:
+        """How far through the programme window `as_of` sits, 0.0 to 1.0."""
+        total = (self.end - self.start).days
+        return max(0.0, min(1.0, (as_of - self.start).days / total)) if total else 0.0
 
     def milestone(self, milestone_id: str) -> Milestone:
         for m in self.milestones:
@@ -305,6 +390,22 @@ class Programme(Base):
                     f"weekly status {ws.week}/{ws.sub_stream_id} references "
                     f"unknown milestone {ws.next_milestone_id!r}"
                 )
+
+        for benefit in self.benefits:
+            if benefit.sub_stream_id not in known_ss:
+                raise ValueError(
+                    f"benefit {benefit.id} references unknown sub-stream "
+                    f"{benefit.sub_stream_id!r}"
+                )
+            if not window[0] <= benefit.as_of <= window[1]:
+                raise ValueError(
+                    f"benefit {benefit.id} is measured on {benefit.as_of}, "
+                    f"outside the programme window"
+                )
+
+        benefit_ids = [b.id for b in self.benefits]
+        if len(set(benefit_ids)) != len(benefit_ids):
+            raise ValueError("duplicate benefit ids")
 
         seen: set[tuple[str, str]] = set()
         for ws in self.weekly_status:

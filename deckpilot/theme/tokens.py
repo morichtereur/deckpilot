@@ -234,6 +234,15 @@ CRITERIA_HEAD_H = inches(0.62)
 CRITERIA_LABEL_H = inches(0.20)
 CRITERIA_PAD = inches(0.10)
 
+# KPI scorecard metrics
+KPI_HEADER_H = inches(0.28)
+KPI_ROW_MAX_H = inches(0.60)
+KPI_BAR_H = inches(0.17)
+KPI_TICK_W = inches(0.026)
+KPI_TICK_OVERHANG = inches(0.05)  # how far the marker stands proud of the track
+KPI_PAD = inches(0.07)
+KPI_BEHIND_TOLERANCE = 0.20  # attainment points behind delivery before a row goes red
+
 # Executive summary metrics
 EXEC_VERDICT_H = inches(1.05)
 EXEC_RAG_W = inches(1.30)

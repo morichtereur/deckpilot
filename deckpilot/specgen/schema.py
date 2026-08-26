@@ -211,6 +211,27 @@ class ExecSummarySpec(SlideBase):
 
 
 # --------------------------------------------------------------------------
+# 9. KPI scorecard
+# --------------------------------------------------------------------------
+
+
+class BenefitRow(Spec):
+    name: str = Field(min_length=1, max_length=60)
+    owner: str = Field(min_length=1, max_length=40)
+    baseline: str = Field(min_length=1, max_length=16)
+    current: str = Field(min_length=1, max_length=16)
+    target: str = Field(min_length=1, max_length=16)
+    attainment: float = Field(ge=0.0, le=1.0)
+    expected: float = Field(ge=0.0, le=1.0)
+
+
+class KpiScorecardSpec(SlideBase):
+    layout: Literal["kpi_scorecard"] = "kpi_scorecard"
+    rows: list[BenefitRow] = Field(min_length=1, max_length=10)
+    expected_label: str = "Delivery progress of the producing stream"
+
+
+# --------------------------------------------------------------------------
 # Deck
 # --------------------------------------------------------------------------
 
@@ -222,7 +243,8 @@ AnySlideSpec = Annotated[
     | RaidTableSpec
     | StatusOverviewSpec
     | CriteriaColumnsSpec
-    | ExecSummarySpec,
+    | ExecSummarySpec
+    | KpiScorecardSpec,
     Field(discriminator="layout"),
 ]
 

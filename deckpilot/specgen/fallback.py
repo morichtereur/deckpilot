@@ -15,6 +15,7 @@ from datetime import date
 
 from deckpilot.data.models import RAG, Programme, RaidItem, Severity, SubStream, WorkPackage
 from deckpilot.specgen.schema import (
+    BenefitRow,
     CharterColumn,
     CriteriaColumn,
     CriteriaColumnsSpec,
@@ -27,6 +28,7 @@ from deckpilot.specgen.schema import (
     GovernanceChartSpec,
     GovernanceUnit,
     KeyMessage,
+    KpiScorecardSpec,
     RaidRow,
     RaidTableSpec,
     RoadmapGanttSpec,
@@ -345,6 +347,54 @@ def raid_table(programme: Programme, week: str, per_type: int = 3) -> RaidTableS
     )
 
 
+def kpi_scorecard(programme: Programme, week: str) -> KpiScorecardSpec | None:
+    """Benefit measures against the delivery that is supposed to produce them."""
+    if not programme.benefits:
+        return None
+    progress = {s.sub_stream_id: s.progress_pct for s in programme.status_for_week(week)}
+
+    rows, behind = [], []
+    for benefit in programme.benefits:
+        expected = progress.get(benefit.sub_stream_id, 0) / 100
+        rows.append(
+            BenefitRow(
+                name=benefit.display_name,
+                owner=benefit.owner,
+                baseline=benefit.plain(benefit.baseline),
+                current=benefit.plain(benefit.current),
+                target=benefit.plain(benefit.target),
+                attainment=benefit.attainment,
+                expected=expected,
+            )
+        )
+        if benefit.attainment < expected:
+            behind.append(benefit)
+
+    ahead = len(rows) - len(behind)
+    if not behind:
+        title = f"All {len(rows)} measures are running ahead of the delivery behind them"
+    else:
+        worst = min(
+            behind,
+            key=lambda b: b.attainment - progress.get(b.sub_stream_id, 0) / 100,
+        )
+        title = (
+            f"{ahead} of {len(rows)} measures are ahead of their delivery; "
+            f"{worst.name.lower()} is the furthest adrift"
+        )
+
+    all_ids = {ss.id for ss in programme.sub_streams}
+    return KpiScorecardSpec(
+        title=title,
+        subtitle=(
+            f"Benefit realisation | Week {week} | Measured against delivery progress, "
+            f"not elapsed time, because benefits back-load"
+        ),
+        rows=rows,
+        considerations=[raid_line(i) for i in raid_for(programme, all_ids, 3)],
+    )
+
+
 def criteria_columns(programme: Programme, week: str) -> CriteriaColumnsSpec:
     """The stage gates, as a question each with the criteria that answer it."""
     today = week_end(week)
@@ -464,11 +514,13 @@ def build_deck_spec(programme: Programme, week: str | None = None) -> DeckSpec:
         divider(1, "Where we stand", "Work package status and the open RAID position"),
         status_overview(programme, week),
         raid_table(programme, week),
+        kpi_scorecard(programme, week),
         divider(2, "Delivery plan", "The roadmap and the gates it has to clear"),
         roadmap(programme, week, today),
         criteria_columns(programme, week),
         divider(3, "Work packages", "Charter and current position for each work package"),
     ]
+    slides = [s for s in slides if s is not None]
     slides += [c for c in (charter(programme, week, wp) for wp in programme.work_packages) if c]
     slides += [
         divider(4, "Governance", "Who decides, who delivers, and who has to be consulted"),
