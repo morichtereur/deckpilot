@@ -8,6 +8,9 @@ one object, still coloured, still editable.
 
 from __future__ import annotations
 
+import logging
+from dataclasses import dataclass
+
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.presentation import Presentation as PresentationType
 from pptx.slide import Slide
@@ -23,6 +26,8 @@ from deckpilot.renderer.base import (
 from deckpilot.specgen.schema import RaidRow, RaidTableSpec
 from deckpilot.theme import tokens as T
 
+log = logging.getLogger("deckpilot.renderer")
+
 # Column widths as fractions of the content width. They sum to 1.
 COLUMN_SHARE = {
     "severity": 0.045,
@@ -34,6 +39,10 @@ COLUMN_SHARE = {
 }
 HEADINGS = ["", "ID", "Item", "Owner", "Due", "Mitigation and next step"]
 GROUP_ORDER = ["risk", "issue", "dependency", "assumption"]
+
+
+def column_widths(total: int) -> dict[str, int]:
+    return {key: int(total * share) for key, share in COLUMN_SHARE.items()}
 
 
 def _ordered(rows: list[RaidRow]) -> list[tuple[str, list[RaidRow]]]:
@@ -70,6 +79,10 @@ def _cell(cell, text: str, size: float, *, bold=False, color=None, align=PP_ALIG
 
 
 CELL_MARGIN = T.inches(0.03)
+CANDIDATE_SIZES = [T.FS_DENSE, T.FS_DENSE - 0.5, T.FS_MICRO, T.FS_MICRO - 0.5, T.FS_MICRO - 1]
+PREFERRED_SIZE = CANDIDATE_SIZES[0]
+BALANCE_TOLERANCE = T.inches(0.02)
+MAX_ROW_STRETCH = 1.55  # how far a row may open out beyond the height its text needs
 
 
 def _row_lines(row: RaidRow, widths: dict[str, int], size: float) -> int:
@@ -84,6 +97,21 @@ def _row_lines(row: RaidRow, widths: dict[str, int], size: float) -> int:
     )
 
 
+def _spread(heights: list[int], available: int) -> list[int]:
+    """Open the rows out into whatever height is left over.
+
+    A table that stops two thirds of the way down its slide looks like a table
+    that was cut off. Spreading the surplus across the rows fills the same slide
+    with the same content and reads as a deliberate rhythm - capped, because past
+    a point a row stops looking generous and starts looking empty.
+    """
+    surplus = available - sum(heights)
+    if surplus <= 0 or not heights:
+        return heights
+    per_row = surplus // len(heights)
+    return [min(h + per_row, int(h * MAX_ROW_STRETCH)) for h in heights]
+
+
 def _plan(rows: list[RaidRow], widths: dict[str, int], groups: int,
           available: int) -> tuple[float, list[int]]:
     """Choose a type size and a height for every row so the whole table fits.
@@ -94,17 +122,121 @@ def _plan(rows: list[RaidRow], widths: dict[str, int], groups: int,
     computed from the wrapped line count rather than divided out evenly.
     """
     fixed = T.RAID_HEADER_H + groups * T.RAID_GROUP_H
-    candidates = [T.FS_DENSE, T.FS_DENSE - 0.5, T.FS_MICRO, T.FS_MICRO - 0.5, T.FS_MICRO - 1]
     heights: list[int] = []
-    for size in candidates:
+    for size in CANDIDATE_SIZES:
         line_h = size * tm.LINE_HEIGHT_FACTOR * T.EMU_PER_PT
         heights = [
             max(T.RAID_ROW_MIN_H, int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN)
             for row in rows
         ]
         if fixed + sum(heights) <= available:
-            return size, heights
-    return candidates[-1], heights
+            return size, _spread(heights, available - fixed)
+    log.warning(
+        "raid table: %d rows do not fit %.2f in even at %.1fpt",
+        len(rows), available / T.EMU_PER_INCH, CANDIDATE_SIZES[-1],
+    )
+    return CANDIDATE_SIZES[-1], heights
+
+
+@dataclass(frozen=True)
+class Page:
+    """One slide's worth of a log too long for a single slide."""
+
+    rows: list[RaidRow]
+    continued_groups: list[str]
+
+
+def _break_into_pages(
+    rows: list[RaidRow],
+    widths: dict[str, int],
+    size: float,
+    available: int,
+    available_cap: int | None = None,
+) -> list[Page]:
+    """Greedily fill slides, repeating a group's header when it spans a break.
+
+    `available` is the height budget to fill to; `available_cap` is the real
+    slide height, so a single row taller than the budget still goes on a slide of
+    its own rather than being deferred forever.
+    """
+    cap = available if available_cap is None else available_cap
+    line_h = size * tm.LINE_HEIGHT_FACTOR * T.EMU_PER_PT
+
+    def height(row: RaidRow) -> int:
+        return max(
+            T.RAID_ROW_MIN_H, int(_row_lines(row, widths, size) * line_h) + 2 * CELL_MARGIN
+        )
+
+    pages: list[Page] = []
+    current: list[RaidRow] = []
+    continued: list[str] = []
+    group: str | None = None
+    used = T.RAID_HEADER_H
+
+    for row in rows:
+        changed = row.kind != group
+        needed = (T.RAID_GROUP_H if changed else 0) + height(row)
+        if current and used + needed > available:
+            pages.append(Page(current, continued))
+            # A group cut in half is re-announced on the next slide.
+            continued = [] if changed else [row.kind]
+            current = [row]
+            group = row.kind
+            used = T.RAID_HEADER_H + T.RAID_GROUP_H + height(row)
+            continue
+        if changed:
+            used += T.RAID_GROUP_H
+            group = row.kind
+        used += height(row)
+        current.append(row)
+
+    if current:
+        pages.append(Page(current, continued))
+    for page in pages:
+        if len(page.rows) == 1 and T.RAID_HEADER_H + T.RAID_GROUP_H + height(page.rows[0]) > cap:
+            log.warning(
+                "raid table: item %s does not fit a slide even alone", page.rows[0].id
+            )
+    return pages
+
+
+def paginate(rows: list[RaidRow], total_width: int, available: int) -> list[Page]:
+    """Split a log across as many slides as it needs, at the full dense size.
+
+    Type size and page count trade against each other, and for an appendix the
+    trade is one-sided: a slide costs nothing and an unreadable table costs the
+    reader. So pagination measures at PREFERRED_SIZE and adds slides rather than
+    shrinking type - the opposite of what a single summary slide does, where the
+    slide count is fixed at one and the type has to give.
+
+    Because PREFERRED_SIZE is also the largest size `_plan` will consider, every
+    page produced here renders at exactly that size. That matters: a log whose
+    second slide is set a point larger than its first looks like two different
+    documents.
+    """
+    ordered = [row for _, members in _ordered(rows) for row in members]
+    widths = column_widths(total_width)
+    pages = _break_into_pages(ordered, widths, PREFERRED_SIZE, available)
+    if len(pages) < 2:
+        return pages
+
+    # Filling greedily leaves the last slide with whatever is left over - sixteen
+    # rows and then two. Shrinking the per-slide budget as far as it will go
+    # without adding a slide spreads the same rows evenly across the same number
+    # of slides, which is what someone laying this out by hand would do.
+    target = len(pages)
+    low, high = T.RAID_HEADER_H, available
+    balanced = pages
+    while high - low > BALANCE_TOLERANCE:
+        middle = (low + high) // 2
+        trial = _break_into_pages(
+            ordered, widths, PREFERRED_SIZE, middle, available_cap=available
+        )
+        if len(trial) <= target:
+            balanced, high = trial, middle
+        else:
+            low = middle + 1
+    return balanced
 
 
 def render(prs: PresentationType, spec: RaidTableSpec, page: int) -> Slide:
@@ -126,9 +258,8 @@ def render(prs: PresentationType, spec: RaidTableSpec, page: int) -> Slide:
     table.horz_banding = False
     _drop_theme_style(graphic)
 
-    widths = {}
+    widths = column_widths(width)
     for i, key in enumerate(COLUMN_SHARE):
-        widths[key] = int(width * COLUMN_SHARE[key])
         table.columns[i].width = Emu(widths[key])
 
     size, row_heights = _plan(spec.rows, widths, len(groups), height)
@@ -144,8 +275,15 @@ def render(prs: PresentationType, spec: RaidTableSpec, page: int) -> Slide:
     for kind, members in groups:
         table.rows[index].height = Emu(T.RAID_GROUP_H)
         label = spec.group_labels.get(kind, kind.title())
+        # A count on a continued group would be the count on this slide, not the
+        # count in the log, which is worse than no count at all.
+        label = (
+            f"{label} (continued)"
+            if kind in spec.continued_groups
+            else f"{label} ({len(members)})"
+        )
         _cell(table.cell(index, 0), "", T.FS_MICRO, fill=T.tint(T.PRIMARY, 0.86))
-        _cell(table.cell(index, 1), f"{label} ({len(members)})", T.FS_MICRO,
+        _cell(table.cell(index, 1), label, T.FS_MICRO,
               bold=True, color=T.PRIMARY, fill=T.tint(T.PRIMARY, 0.86))
         table.cell(index, 1).merge(table.cell(index, len(HEADINGS) - 1))
         index += 1

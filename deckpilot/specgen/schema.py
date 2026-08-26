@@ -141,6 +141,8 @@ class RaidRow(Spec):
 class RaidTableSpec(SlideBase):
     layout: Literal["raid_table"] = "raid_table"
     rows: list[RaidRow] = Field(min_length=1, max_length=20)
+    # Set when a log is long enough to need more than one slide.
+    continued_groups: list[RaidKind] = Field(default_factory=list)
     group_labels: dict[str, str] = Field(
         default_factory=lambda: {
             "risk": "Risks",

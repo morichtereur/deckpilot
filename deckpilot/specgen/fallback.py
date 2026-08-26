@@ -14,6 +14,7 @@ from __future__ import annotations
 from datetime import date
 
 from deckpilot.data.models import RAG, Programme, RaidItem, Severity, SubStream, WorkPackage
+from deckpilot.renderer.raid_table import paginate as raid_pagination
 from deckpilot.specgen.schema import (
     BenefitRow,
     CharterColumn,
@@ -37,6 +38,7 @@ from deckpilot.specgen.schema import (
     StatusOverviewSpec,
     WorkstreamCharterSpec,
 )
+from deckpilot.theme import tokens as T
 
 SEVERITY_ORDER = {Severity.HIGH: 0, Severity.MEDIUM: 1, Severity.LOW: 2}
 RAG_ORDER = {RAG.RED: 0, RAG.AMBER: 1, RAG.GREEN: 2}
@@ -317,18 +319,7 @@ def raid_table(programme: Programme, week: str, per_type: int = 3) -> RaidTableS
     rows = []
     for kind in ("risk", "issue", "dependency", "assumption"):
         members = rank_raid([i for i in programme.raid if i.type.value == kind])[:per_type]
-        rows += [
-            RaidRow(
-                id=item.id,
-                kind=kind,
-                severity=item.severity.value,
-                title=item.title,
-                owner=item.owner,
-                due=f"{item.due:%d %b}",
-                mitigation=item.mitigation,
-            )
-            for item in members
-        ]
+        rows += [_raid_row(item) for item in members]
 
     high = sum(1 for i in programme.raid if i.severity is Severity.HIGH)
     overdue = sum(1 for i in programme.raid if i.due < week_end(week))
@@ -393,6 +384,48 @@ def kpi_scorecard(programme: Programme, week: str) -> KpiScorecardSpec | None:
         rows=rows,
         considerations=[raid_line(i) for i in raid_for(programme, all_ids, 3)],
     )
+
+
+def _raid_row(item: RaidItem) -> RaidRow:
+    return RaidRow(
+        id=item.id,
+        kind=item.type.value,
+        severity=item.severity.value,
+        title=item.title,
+        owner=item.owner,
+        due=f"{item.due:%d %b}",
+        mitigation=item.mitigation,
+    )
+
+
+def raid_appendix(programme: Programme, week: str) -> list[RaidTableSpec]:
+    """The whole log, across as many slides as it takes.
+
+    Pagination is measured, not guessed: the renderer reports how many rows fit
+    at a readable size, and this emits one slide per page. Measurement stays in
+    the layout because that is where the geometry is; how many slides result is a
+    deck-structure decision, so it is made here.
+    """
+    rows = [_raid_row(i) for i in rank_raid(programme.raid)]
+    pages = raid_pagination(rows, T.content_width(), T.content_height())
+
+    high = sum(1 for i in programme.raid if i.severity is Severity.HIGH)
+    title = (
+        f"{high} of {len(programme.raid)} open items are high severity and "
+        f"carry the programme's exposure"
+    )
+    return [
+        RaidTableSpec(
+            title=title,
+            subtitle=(
+                f"Full RAID log | Week {week} | Page {n} of {len(pages)} | "
+                f"{len(programme.raid)} open items, worst first within each type"
+            ),
+            rows=page.rows,
+            continued_groups=page.continued_groups,
+        )
+        for n, page in enumerate(pages, start=1)
+    ]
 
 
 def criteria_columns(programme: Programme, week: str) -> CriteriaColumnsSpec:
@@ -525,7 +558,9 @@ def build_deck_spec(programme: Programme, week: str | None = None) -> DeckSpec:
     slides += [
         divider(4, "Governance", "Who decides, who delivers, and who has to be consulted"),
         governance(programme),
+        divider(5, "Appendix", "The full RAID log, in support of the position above"),
     ]
+    slides += raid_appendix(programme, week)
 
     return DeckSpec(
         title=f"{programme.client} - {programme.name}",
