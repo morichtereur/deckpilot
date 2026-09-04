@@ -286,3 +286,7 @@ nothing but Python.
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+Built by [Moritz Richter](https://www.linkedin.com/in/moritz-richter-28297119a/) · Finance & Strategy Consultant · Zürich · [Portfolio](https://morichtereur.github.io/)
